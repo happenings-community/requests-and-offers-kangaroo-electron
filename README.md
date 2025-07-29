@@ -10,12 +10,15 @@ This repository let's you easily convert your Holochain app into a standalone, e
 
 Depending on which Holochain minor version you want to use you should use the corresponding branch of this repository.
 
-
 - Holochain 0.4.x (stable): [main-0.4](https://github.com/holochain/kangaroo-electron/tree/main-0.4)
 - Holochain 0.5.x: [main](https://github.com/holochain/kangaroo-electron/tree/main)
 - Holochain 0.3.x: [main-0.3](https://github.com/holochain/kangaroo-electron/tree/main-0.3)
 
 # Instructions
+
+## Platform-Specific Guides
+
+- [macOS Deployment Guide](docs/MACOS_DEPLOYMENT.md) - Comprehensive guide for macOS builds, distribution, and Homebrew setup
 
 ## Setup and Testing Locally
 
@@ -52,8 +55,7 @@ yarn dev
 > instances of these servers or use servers that have guaranteed availability for the lifetime
 > of your app's network(s).
 >
-> **Changing these URLs *after* deployment of your app can result in a network partition**.
-
+> **Changing these URLs _after_ deployment of your app can result in a network partition**.
 
 ### Build locally
 
@@ -138,7 +140,7 @@ To use code signing on macOS for your release in CI you will have to
 
 > [!WARNING]
 > **Unsigned applications are put under quarantine on macOS 15 (Sequoia).** The option in the Privacy & Security panel of the System Settings to allow them has been removed. To unset the quarantine attribute of an unsigned app,
-the command `xattr -r -d com.apple.quarantine /path/to/app` can be executed from a Terminal. The app can then be run.
+> the command `xattr -r -d com.apple.quarantine /path/to/app` can be executed from a Terminal. The app can then be run.
 
 ### Windows
 
