@@ -24,6 +24,11 @@ jobs:
         with:
           node-version: 22
 
+      - name: setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
       # This step is only used for testing in the official kangaroo repo
       - name: Overwrite Names for release testing
         if: ${{ github.repository }} == 'holochain-apps/kangaroo-electron'
