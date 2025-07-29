@@ -1,6 +1,7 @@
 import { defineConfig } from './src/main/defineConfig';
 
 export default defineConfig({
+  // Alpha 5.1 release with network reliability fixes
   appId: 'requests-and-offers.happenings-community.kangaroo-electron',
   productName: 'Requests and Offers',
   version: '0.1.0-alpha.5.1',
