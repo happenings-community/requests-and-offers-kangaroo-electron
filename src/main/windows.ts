@@ -46,7 +46,7 @@ export const createHappWindow = async (
         ? !fs.existsSync(absoluteFilePath)
         : false;
 
-      if (!relativeFilePath.endsWith('index.html') && !fallbackToIndexHtml) {
+      if (!relativeFilePath.endsWith('index.html') && !fallbackToIndexHtml && fs.existsSync(absoluteFilePath)) {
         return net.fetch(url.pathToFileURL(absoluteFilePath).toString());
       } else {
         const indexHtmlResponse = await net.fetch(url.pathToFileURL(path.join(uiSource.path, 'index.html')).toString());

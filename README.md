@@ -4,18 +4,22 @@ Put your Holochain App in this Kangaroo's electron pouch and let it run.
 
 This repository let's you easily convert your Holochain app into a standalone, electron-based cross-platform Desktop app.
 
-**Note:** Support for non-breaking updates to happ coordinator zomes is currently not built into the kangaroo.
+> [!WARNING]
+> Support for non-breaking updates to happ coordinator zomes is currently not built into the kangaroo. It is expected that there is only ever one single version of a happ for any semver compatible range of versions of a kangaroo packaged app (see also [Versioning](#versioning))
 
 # Holochain Versions
 
 Depending on which Holochain minor version you want to use you should use the corresponding branch of this repository.
-
 
 - Holochain 0.4.x (stable): [main-0.4](https://github.com/holochain/kangaroo-electron/tree/main-0.4)
 - Holochain 0.5.x: [main](https://github.com/holochain/kangaroo-electron/tree/main)
 - Holochain 0.3.x: [main-0.3](https://github.com/holochain/kangaroo-electron/tree/main-0.3)
 
 # Instructions
+
+## Platform-Specific Guides
+
+- [macOS Deployment Guide](docs/MACOS_DEPLOYMENT.md) - Comprehensive guide for macOS builds, distribution, and Homebrew setup
 
 ## Setup and Testing Locally
 
@@ -52,8 +56,7 @@ yarn dev
 > instances of these servers or use servers that have guaranteed availability for the lifetime
 > of your app's network(s).
 >
-> **Changing these URLs *after* deployment of your app can result in a network partition**.
-
+> **Changing these URLs _after_ deployment of your app can result in a network partition**.
 
 ### Build locally
 
@@ -106,7 +109,7 @@ By default, the kangaroo is set up to check github releases for semver compatibl
 
 ## Versioning
 
-To allow for subsequent incompatible releases of your app (for example due to switching to a new Holochain version or introducing a breaking change in the integrity zomes of your .happ) without having to change the app's name or identifier, the kangaroo is set up to use semver to support incompatible versions of your app running fully independently from each other and store their data in dedicated locations on disk.
+To allow for subsequent incompatible releases of your app (for example due to switching to a new Holochain version) without having to change the app's name or identifier, the kangaroo is set up to use semver to support incompatible versions of your app running fully independently from each other and store their data in dedicated locations on disk.
 
 Examples:
 
@@ -138,7 +141,7 @@ To use code signing on macOS for your release in CI you will have to
 
 > [!WARNING]
 > **Unsigned applications are put under quarantine on macOS 15 (Sequoia).** The option in the Privacy & Security panel of the System Settings to allow them has been removed. To unset the quarantine attribute of an unsigned app,
-the command `xattr -r -d com.apple.quarantine /path/to/app` can be executed from a Terminal. The app can then be run.
+> the command `xattr -r -d com.apple.quarantine /path/to/app` can be executed from a Terminal. The app can then be run.
 
 ### Windows
 
