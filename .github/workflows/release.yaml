@@ -49,7 +49,6 @@ jobs:
         run: |
           # Install Visual Studio build tools and node-gyp
           npm install -g node-gyp
-          npm config set msvs_version 2022
 
       # This step is only used for testing in the official kangaroo repo
       - name: Overwrite Names for release testing

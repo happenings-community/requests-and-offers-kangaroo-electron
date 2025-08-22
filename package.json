@@ -41,7 +41,8 @@
     "winston": "3.11.0"
   },
   "optionalDependencies": {
-    "utf-8-validate": "^6.0.3"
+    "utf-8-validate": "^6.0.3",
+    "dmg-license": "^1.0.11"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
@@ -50,7 +51,6 @@
     "@electron/notarize": "3.0.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
-    "dmg-license": "^1.0.11",
     "electron": "^29.4.1",
     "electron-builder": "^24.6.3",
     "electron-vite": "^2.3.0",
