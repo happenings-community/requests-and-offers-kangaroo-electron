@@ -38,8 +38,10 @@
     "nanoid": "5.0.4",
     "semver": "^7.6.2",
     "split": "1.0.1",
-    "utf-8-validate": "^6.0.3",
     "winston": "3.11.0"
+  },
+  "optionalDependencies": {
+    "utf-8-validate": "^6.0.3"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
