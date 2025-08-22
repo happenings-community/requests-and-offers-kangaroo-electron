@@ -43,6 +43,9 @@ jobs:
           xcode-select --install || true
           # Install node-gyp globally
           npm install -g node-gyp
+          # Prepare disk utility for DMG creation (fix hdiutil device issues)
+          sudo diskutil list
+          sudo purge || true
 
       - name: Install build dependencies (Windows)
         if: matrix.platform == 'windows-2022'
@@ -144,6 +147,21 @@ jobs:
         run: |
           npm run build:linux
           ls dist
+
+          # Create latest-linux.yml if it doesn't exist (needed when publish is disabled)
+          if [ ! -f "dist/latest-linux.yml" ]; then
+            echo "Creating dummy latest-linux.yml for deb modification script"
+            cat > dist/latest-linux.yml << EOF
+          version: ${{ steps.kangarooConfig.outputs.APP_VERSION }}
+          files:
+            - url: ${{ steps.kangarooConfig.outputs.APP_ID }}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb
+              sha512: dummy
+              size: 0
+          path: ${{ steps.kangarooConfig.outputs.APP_ID }}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb
+          sha512: dummy
+          releaseDate: $(date -Iseconds)
+          EOF
+          fi
 
           # Modify the postinst script of the .deb file
           node ./scripts/extend-deb-postinst.mjs

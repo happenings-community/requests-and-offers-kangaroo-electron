@@ -1,0 +1,403 @@
+﻿2025-08-22T18:09:12.8406030Z Current runner version: '2.328.0'
+2025-08-22T18:09:12.8421400Z ##[group]Runner Image Provisioner
+2025-08-22T18:09:12.8421880Z Hosted Compute Agent
+2025-08-22T18:09:12.8422220Z Version: 20250821.380
+2025-08-22T18:09:12.8422730Z Commit: 438d12cb4fe092871db9867344e3bc0bc5319035
+2025-08-22T18:09:12.8423160Z Build Date: 2025-08-21T20:49:43Z
+2025-08-22T18:09:12.8423520Z ##[endgroup]
+2025-08-22T18:09:12.8423840Z ##[group]Operating System
+2025-08-22T18:09:12.8424190Z macOS
+2025-08-22T18:09:12.8424480Z 15.5
+2025-08-22T18:09:12.8424760Z 24F74
+2025-08-22T18:09:12.8425040Z ##[endgroup]
+2025-08-22T18:09:12.8425340Z ##[group]Runner Image
+2025-08-22T18:09:12.8425660Z Image: macos-15-arm64
+2025-08-22T18:09:12.8425970Z Version: 20250818.2206
+2025-08-22T18:09:12.8428160Z Included Software: https://github.com/actions/runner-images/blob/macos-15-arm64/20250818.2206/images/macos/macos-15-arm64-Readme.md
+2025-08-22T18:09:12.8431260Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15-arm64%2F20250818.2206
+2025-08-22T18:09:12.8432900Z ##[endgroup]
+2025-08-22T18:09:12.8434680Z ##[group]GITHUB_TOKEN Permissions
+2025-08-22T18:09:12.8459960Z Contents: write
+2025-08-22T18:09:12.8460800Z Metadata: read
+2025-08-22T18:09:12.8461600Z ##[endgroup]
+2025-08-22T18:09:12.8465400Z Secret source: Actions
+2025-08-22T18:09:12.8466430Z Prepare workflow directory
+2025-08-22T18:09:12.8948040Z Prepare all required actions
+2025-08-22T18:09:12.8977180Z Getting action download info
+2025-08-22T18:09:13.3472660Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+2025-08-22T18:09:14.6657010Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2025-08-22T18:09:14.7624990Z Download action repository 'oven-sh/setup-bun@v2' (SHA:735343b667d3e6f658f44d0eca948eb6282f2b76)
+2025-08-22T18:09:15.7365710Z Download action repository 'matthme/import-codesign-certs@5565bb656f60c98c8fc515f3444dd8db73545dc2' (SHA:5565bb656f60c98c8fc515f3444dd8db73545dc2)
+2025-08-22T18:09:16.7751670Z Complete job name: publish (macos-latest)
+2025-08-22T18:09:16.8162140Z ##[group]Run actions/checkout@v4
+2025-08-22T18:09:16.8162510Z with:
+2025-08-22T18:09:16.8162780Z   repository: happenings-community/requests-and-offers-kangaroo-electron
+2025-08-22T18:09:16.8163370Z   token: ***
+2025-08-22T18:09:16.8163490Z   ssh-strict: true
+2025-08-22T18:09:16.8163620Z   ssh-user: git
+2025-08-22T18:09:16.8163760Z   persist-credentials: true
+2025-08-22T18:09:16.8163910Z   clean: true
+2025-08-22T18:09:16.8164050Z   sparse-checkout-cone-mode: true
+2025-08-22T18:09:16.8164250Z   fetch-depth: 1
+2025-08-22T18:09:16.8164380Z   fetch-tags: false
+2025-08-22T18:09:16.8164520Z   show-progress: true
+2025-08-22T18:09:16.8164650Z   lfs: false
+2025-08-22T18:09:16.8164920Z   submodules: false
+2025-08-22T18:09:16.8165060Z   set-safe-directory: true
+2025-08-22T18:09:16.8165320Z env:
+2025-08-22T18:09:16.8165440Z   MACOSX_DEPLOYMENT_TARGET: 10.13
+2025-08-22T18:09:16.8165610Z ##[endgroup]
+2025-08-22T18:09:17.1169890Z Syncing repository: happenings-community/requests-and-offers-kangaroo-electron
+2025-08-22T18:09:17.1171690Z ##[group]Getting Git version info
+2025-08-22T18:09:17.1174100Z Working directory is '/Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron'
+2025-08-22T18:09:17.1175450Z [command]/opt/homebrew/bin/git version
+2025-08-22T18:09:17.1426410Z git version 2.50.1
+2025-08-22T18:09:17.1466060Z ##[endgroup]
+2025-08-22T18:09:17.1477350Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/446fdaae-11f5-4a71-a479-22179f33a5f4/.gitconfig'
+2025-08-22T18:09:17.1485050Z Temporarily overriding HOME='/Users/runner/work/_temp/446fdaae-11f5-4a71-a479-22179f33a5f4' before making global git config changes
+2025-08-22T18:09:17.1485730Z Adding repository directory to the temporary git global config as a safe directory
+2025-08-22T18:09:17.1495870Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron
+2025-08-22T18:09:17.1624950Z Deleting the contents of '/Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron'
+2025-08-22T18:09:17.1628040Z ##[group]Initializing the repository
+2025-08-22T18:09:17.1631290Z [command]/opt/homebrew/bin/git init /Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron
+2025-08-22T18:09:17.1861760Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-08-22T18:09:17.1862490Z hint: is subject to change. To configure the initial branch name to use in all
+2025-08-22T18:09:17.1863020Z hint: of your new repositories, which will suppress this warning, call:
+2025-08-22T18:09:17.1863390Z hint:
+2025-08-22T18:09:17.1863770Z hint: 	git config --global init.defaultBranch <name>
+2025-08-22T18:09:17.1864330Z hint:
+2025-08-22T18:09:17.1864650Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-08-22T18:09:17.1865140Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-08-22T18:09:17.1865720Z hint:
+2025-08-22T18:09:17.1865990Z hint: 	git branch -m <name>
+2025-08-22T18:09:17.1866280Z hint:
+2025-08-22T18:09:17.1866790Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-08-22T18:09:17.1867660Z Initialized empty Git repository in /Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron/.git/
+2025-08-22T18:09:17.1878450Z [command]/opt/homebrew/bin/git remote add origin https://github.com/happenings-community/requests-and-offers-kangaroo-electron
+2025-08-22T18:09:17.1998800Z ##[endgroup]
+2025-08-22T18:09:17.1999340Z ##[group]Disabling automatic garbage collection
+2025-08-22T18:09:17.1999950Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2025-08-22T18:09:17.2213490Z ##[endgroup]
+2025-08-22T18:09:17.2213970Z ##[group]Setting up auth
+2025-08-22T18:09:17.2214760Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-08-22T18:09:17.2249280Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-08-22T18:09:17.3268000Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-08-22T18:09:17.3409850Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-08-22T18:09:17.4453490Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-08-22T18:09:17.4623050Z ##[endgroup]
+2025-08-22T18:09:17.4623880Z ##[group]Fetching the repository
+2025-08-22T18:09:17.4629470Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +741339e436fca8c36973cfab9f482bef7b9be696:refs/remotes/origin/release
+2025-08-22T18:09:19.1797170Z From https://github.com/happenings-community/requests-and-offers-kangaroo-electron
+2025-08-22T18:09:19.1798690Z  * [new ref]         741339e436fca8c36973cfab9f482bef7b9be696 -> origin/release
+2025-08-22T18:09:19.1882530Z ##[endgroup]
+2025-08-22T18:09:19.1883380Z ##[group]Determining the checkout info
+2025-08-22T18:09:19.1884330Z ##[endgroup]
+2025-08-22T18:09:19.1887460Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2025-08-22T18:09:19.1968490Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2025-08-22T18:09:19.2720020Z ##[group]Checking out the ref
+2025-08-22T18:09:19.2870200Z [command]/opt/homebrew/bin/git checkout --progress --force -B release refs/remotes/origin/release
+2025-08-22T18:09:19.3546900Z Switched to a new branch 'release'
+2025-08-22T18:09:19.3604600Z branch 'release' set up to track 'origin/release'.
+2025-08-22T18:09:19.3667600Z ##[endgroup]
+2025-08-22T18:09:19.3671410Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2025-08-22T18:09:19.3748940Z 741339e436fca8c36973cfab9f482bef7b9be696
+2025-08-22T18:09:19.4122240Z ##[group]Run actions/setup-node@v4
+2025-08-22T18:09:19.4122560Z with:
+2025-08-22T18:09:19.4122710Z   node-version: 22
+2025-08-22T18:09:19.4122890Z   always-auth: false
+2025-08-22T18:09:19.4123160Z   check-latest: false
+2025-08-22T18:09:19.4123610Z   token: ***
+2025-08-22T18:09:19.4123760Z env:
+2025-08-22T18:09:19.4123920Z   MACOSX_DEPLOYMENT_TARGET: 10.13
+2025-08-22T18:09:19.4124120Z ##[endgroup]
+2025-08-22T18:09:19.6114670Z Found in cache @ /Users/runner/hostedtoolcache/node/22.18.0/arm64
+2025-08-22T18:09:19.6124670Z ##[group]Environment details
+2025-08-22T18:09:20.3206920Z node: v22.18.0
+2025-08-22T18:09:20.3238410Z npm: 10.9.3
+2025-08-22T18:09:20.3238630Z yarn: 1.22.22
+2025-08-22T18:09:20.3239480Z ##[endgroup]
+2025-08-22T18:09:20.3368240Z ##[group]Run oven-sh/setup-bun@v2
+2025-08-22T18:09:20.3368500Z with:
+2025-08-22T18:09:20.3368650Z   bun-version: latest
+2025-08-22T18:09:20.3368850Z   no-cache: false
+2025-08-22T18:09:20.3368990Z env:
+2025-08-22T18:09:20.3369120Z   MACOSX_DEPLOYMENT_TARGET: 10.13
+2025-08-22T18:09:20.3369330Z ##[endgroup]
+2025-08-22T18:09:20.5008580Z Downloading a new version of Bun: https://bun.sh/download/latest/darwin/arm64?avx2=true&profile=false
+2025-08-22T18:09:21.8705620Z [command]/usr/bin/unzip -o -q /Users/runner/work/_temp/41b34932-ceec-49a5-8fe1-628316325ac4.zip
+2025-08-22T18:09:22.3813810Z [command]/Users/runner/.bun/bin/bun --revision
+2025-08-22T18:09:22.3964480Z 1.2.20+6ad208bc3
+2025-08-22T18:09:22.4361140Z ##[group]Run # Ensure Xcode command line tools are available
+2025-08-22T18:09:22.4361520Z [36;1m# Ensure Xcode command line tools are available[0m
+2025-08-22T18:09:22.4361790Z [36;1mxcode-select --install || true[0m
+2025-08-22T18:09:22.4361990Z [36;1m# Install node-gyp globally[0m
+2025-08-22T18:09:22.4362190Z [36;1mnpm install -g node-gyp[0m
+2025-08-22T18:09:22.4405960Z shell: /bin/bash -e {0}
+2025-08-22T18:09:22.4406340Z env:
+2025-08-22T18:09:22.4406520Z   MACOSX_DEPLOYMENT_TARGET: 10.13
+2025-08-22T18:09:22.4406700Z ##[endgroup]
+2025-08-22T18:09:22.4936820Z xcode-select: note: Command line tools are already installed. Use "Software Update" in System Settings or the softwareupdate command line interface to install updates
+2025-08-22T18:09:27.5328860Z 
+2025-08-22T18:09:27.5330190Z added 98 packages in 5s
+2025-08-22T18:09:27.5431940Z 
+2025-08-22T18:09:27.5544220Z 17 packages are looking for funding
+2025-08-22T18:09:27.5654550Z   run `npm fund` for details
+2025-08-22T18:09:27.6558330Z ##[group]Run echo happenings-community/requests-and-offers-kangaroo-electron
+2025-08-22T18:09:27.6558990Z [36;1mecho happenings-community/requests-and-offers-kangaroo-electron[0m
+2025-08-22T18:09:27.6559540Z [36;1mecho "overwriting names for release testing"[0m
+2025-08-22T18:09:27.6559900Z [36;1mnode ./scripts/overwrite-with-test-name.js[0m
+2025-08-22T18:09:27.6622170Z shell: /bin/bash -e {0}
+2025-08-22T18:09:27.6622430Z env:
+2025-08-22T18:09:27.6623030Z   MACOSX_DEPLOYMENT_TARGET: 10.13
+2025-08-22T18:09:27.6623230Z ##[endgroup]
+2025-08-22T18:09:27.6952980Z happenings-community/requests-and-offers-kangaroo-electron
+2025-08-22T18:09:27.6960000Z overwriting names for release testing
+2025-08-22T18:09:27.7415440Z ##[group]Run npm install && npm run fetch:binaries && npm run fetch:webhapp && npm run write:configs
+2025-08-22T18:09:27.7416730Z [36;1mnpm install && npm run fetch:binaries && npm run fetch:webhapp && npm run write:configs[0m
+2025-08-22T18:09:27.7492820Z shell: /bin/bash -e {0}
+2025-08-22T18:09:27.7493050Z env:
+2025-08-22T18:09:27.7493320Z   MACOSX_DEPLOYMENT_TARGET: 10.13
+2025-08-22T18:09:27.7493550Z ##[endgroup]
+2025-08-22T18:10:07.2187870Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-08-22T18:10:07.4300410Z npm warn deprecated boolean@3.2.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+2025-08-22T18:10:07.9556630Z npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+2025-08-22T18:10:08.2225870Z npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+2025-08-22T18:10:08.5248120Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-08-22T18:10:09.3621690Z npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+2025-08-22T18:10:09.9790640Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-08-22T18:10:12.7888760Z npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+2025-08-22T18:10:21.1878820Z 
+2025-08-22T18:10:21.1990600Z added 822 packages, and audited 823 packages in 53s
+2025-08-22T18:10:21.2095990Z 
+2025-08-22T18:10:21.2199630Z 199 packages are looking for funding
+2025-08-22T18:10:21.2301230Z   run `npm fund` for details
+2025-08-22T18:10:21.2402560Z 
+2025-08-22T18:10:21.2454530Z 5 vulnerabilities (1 low, 4 moderate)
+2025-08-22T18:10:21.2457930Z 
+2025-08-22T18:10:21.2560310Z To address issues that do not require attention, run:
+2025-08-22T18:10:21.2649540Z   npm audit fix
+2025-08-22T18:10:21.2649880Z 
+2025-08-22T18:10:21.2650180Z To address all issues (including breaking changes), run:
+2025-08-22T18:10:21.2650690Z   npm audit fix --force
+2025-08-22T18:10:21.2650920Z 
+2025-08-22T18:10:21.2652780Z Run `npm audit` for details.
+2025-08-22T18:10:21.4959240Z 
+2025-08-22T18:10:21.4960400Z > requests-and-offers.happenings-community.kangaroo-electron@0.1.0-alpha.6 fetch:binaries
+2025-08-22T18:10:21.4961370Z > node ./scripts/fetch-binaries.js
+2025-08-22T18:10:21.4962360Z 
+2025-08-22T18:10:23.0780250Z Downloading from  https://github.com/matthme/holochain-binaries/releases/download/holochain-binaries-0.5.5/holochain-v0.5.5-aarch64-apple-darwin
+2025-08-22T18:10:23.0909870Z Downloading from  https://github.com/matthme/holochain-binaries/releases/download/lair-binaries-0.6.2/lair-keystore-v0.6.2-aarch64-apple-darwin
+2025-08-22T18:10:23.7361650Z 
+2025-08-22T18:10:23.7463710Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2025-08-22T18:10:23.7566120Z                                  Dload  Upload   Total   Spent    Left  Speed
+2025-08-22T18:10:23.7667060Z 
+2025-08-22T18:10:23.7785390Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2025-08-22T18:10:23.7896400Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2025-08-22T18:10:23.7997930Z 
+2025-08-22T18:10:23.8099230Z   1 11.9M    1  236k    0     0   556k      0  0:00:22 --:--:--  0:00:22  556k
+2025-08-22T18:10:23.8200820Z 100 11.9M  100 11.9M    0     0  19.2M      0 --:--:-- --:--:-- --:--:-- 59.6M
+2025-08-22T18:10:23.8302440Z 
+2025-08-22T18:10:23.8414020Z Download successful. sha256 of file (hex):  05c7270749bb1a5cf61b0eb344a7d7a562da34090d5ea81b4c5b6cf040dd32e8
+2025-08-22T18:10:23.8515670Z Gave executable permission to file.
+2025-08-22T18:10:24.2324260Z 
+2025-08-22T18:10:24.2432910Z   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+2025-08-22T18:10:24.2527900Z                                  Dload  Upload   Total   Spent    Left  Speed
+2025-08-22T18:10:24.2632000Z 
+2025-08-22T18:10:24.2734540Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2025-08-22T18:10:24.2937760Z   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+2025-08-22T18:10:24.3036260Z 
+2025-08-22T18:10:24.3137280Z   1 82.0M    1 1647k    0     0  3881k      0  0:00:21 --:--:--  0:00:21 3881k
+2025-08-22T18:10:24.3239220Z 100 82.0M  100 82.0M    0     0  76.3M      0  0:00:01  0:00:01 --:--:--  124M
+2025-08-22T18:10:24.3339720Z 
+2025-08-22T18:10:24.3441100Z Download successful. sha256 of file (hex):  c7535f3ce81cb6a72397d5942da6bb4a16d9eb9afc78af7ce0b861ca237d51f7
+2025-08-22T18:10:24.3541170Z Gave executable permission to file.
+2025-08-22T18:10:24.5957640Z 
+2025-08-22T18:10:24.6058470Z > requests-and-offers.happenings-community.kangaroo-electron@0.1.0-alpha.6 fetch:webhapp
+2025-08-22T18:10:24.6157610Z > node ./scripts/fetch-webhapp.js
+2025-08-22T18:10:24.6259970Z 
+2025-08-22T18:10:25.9922860Z No webhapp URL specified in kangaroo.config.ts. Skip downloading.
+2025-08-22T18:10:26.1589860Z 
+2025-08-22T18:10:26.1685590Z > requests-and-offers.happenings-community.kangaroo-electron@0.1.0-alpha.6 write:configs
+2025-08-22T18:10:26.1787380Z > node ./scripts/write-configs.js
+2025-08-22T18:10:26.1887550Z 
+2025-08-22T18:10:27.2904830Z 
+2025-08-22T18:10:27.3012980Z 
+2025-08-22T18:10:27.3126830Z          ⚠️   WARNING  ⚠️
+2025-08-22T18:10:27.3224650Z 
+2025-08-22T18:10:27.3328100Z The bootstrapUrl field in kangaroo.config.ts is still set to the testing bootstrap server URL.
+2025-08-22T18:10:27.3454690Z This server has no availability guarantees whatsoever and is meant for testing purposes only.
+2025-08-22T18:10:27.3555760Z 
+2025-08-22T18:10:27.3656950Z If you want to deploy your app to end-users, make sure to run your own
+2025-08-22T18:10:27.3662090Z instance of a bootstrap server or use a server that has guaranteed availability
+2025-08-22T18:10:27.3698710Z for the lifetime of your apps network(s).
+2025-08-22T18:10:27.3699290Z 
+2025-08-22T18:10:27.3699880Z Changing the bootstrap URL after deployment of your app can result in a network partition
+2025-08-22T18:10:27.3700480Z among users of your app.
+2025-08-22T18:10:27.3700890Z 
+2025-08-22T18:10:27.3701120Z   
+2025-08-22T18:10:27.3701510Z 
+2025-08-22T18:10:27.3701680Z 
+2025-08-22T18:10:27.3702350Z          ⚠️   WARNING  ⚠️
+2025-08-22T18:10:27.3702690Z 
+2025-08-22T18:10:27.3703390Z The signalUrl in kangaroo.config.ts is still set to the testing signaling server URL.
+2025-08-22T18:10:27.3704240Z This server has no availability guarantees whatsoever and is meant for testing purposes only.
+2025-08-22T18:10:27.3705100Z 
+2025-08-22T18:10:27.3705580Z If you want to deploy your app to end-users, make sure to run your own
+2025-08-22T18:10:27.3706540Z instance of a signaling server or use a server that has guaranteed availability
+2025-08-22T18:10:27.3707350Z for the lifetime of your apps network(s).
+2025-08-22T18:10:27.3707660Z 
+2025-08-22T18:10:27.3708170Z Changing the signaling server URL after deployment of your app can result in a
+2025-08-22T18:10:27.3708810Z network partition among users of your app.
+2025-08-22T18:10:27.3709300Z 
+2025-08-22T18:10:27.3709460Z 
+2025-08-22T18:10:27.3799550Z ##[group]Run echo "APP_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
+2025-08-22T18:10:27.3800210Z [36;1mecho "APP_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT[0m
+2025-08-22T18:10:27.3800600Z [36;1mecho "APP_ID=$(node ./scripts/read-app-id.js)" >> $GITHUB_OUTPUT[0m
+2025-08-22T18:10:27.3801080Z [36;1mecho "MACOS_CODE_SIGNING=$(node ./scripts/read-macos-code-signing.js)" >> $GITHUB_OUTPUT[0m
+2025-08-22T18:10:27.3801560Z [36;1mecho "WINDOWS_CODE_SIGNING=$(node ./scripts/read-windows-code-signing.js)" >> $GITHUB_OUTPUT[0m
+2025-08-22T18:10:27.3904630Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2025-08-22T18:10:27.3905610Z env:
+2025-08-22T18:10:27.3906060Z   MACOSX_DEPLOYMENT_TARGET: 10.13
+2025-08-22T18:10:27.3907020Z ##[endgroup]
+2025-08-22T18:10:30.7301870Z ##[group]Run if ! ls ./pouch/*.webhapp 1>/dev/null 2>&1; then
+2025-08-22T18:10:30.7302320Z [36;1mif ! ls ./pouch/*.webhapp 1>/dev/null 2>&1; then[0m
+2025-08-22T18:10:30.7302920Z [36;1m  echo "Error: No .webhapp file found in ./pouch folder. Make sure to specify a URL to your webhapp in kangaroo.config.ts or commit the webhapp to git."[0m
+2025-08-22T18:10:30.7303380Z [36;1m  exit 1[0m
+2025-08-22T18:10:30.7303520Z [36;1mfi[0m
+2025-08-22T18:10:30.7337690Z shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+2025-08-22T18:10:30.7337930Z env:
+2025-08-22T18:10:30.7338120Z   MACOSX_DEPLOYMENT_TARGET: 10.13
+2025-08-22T18:10:30.7338820Z ##[endgroup]
+2025-08-22T18:10:30.7726470Z ##[group]Run npm run build:mac-arm64
+2025-08-22T18:10:30.7726880Z [36;1mnpm run build:mac-arm64[0m
+2025-08-22T18:10:30.7727190Z [36;1mls dist[0m
+2025-08-22T18:10:30.7759100Z shell: /bin/bash -e {0}
+2025-08-22T18:10:30.7759330Z env:
+2025-08-22T18:10:30.7759500Z   MACOSX_DEPLOYMENT_TARGET: 10.13
+2025-08-22T18:10:30.7760570Z   GITHUB_TOKEN: ***
+2025-08-22T18:10:30.7760920Z   CSC_IDENTITY_AUTO_DISCOVERY: false
+2025-08-22T18:10:30.7761110Z ##[endgroup]
+2025-08-22T18:10:30.9310040Z 
+2025-08-22T18:10:30.9500880Z > requests-and-offers.happenings-community.kangaroo-electron@0.1.0-alpha.6 build:mac-arm64
+2025-08-22T18:10:30.9506270Z > bun run build && electron-builder --mac --arm64 --config
+2025-08-22T18:10:30.9612360Z 
+2025-08-22T18:10:31.0396920Z $ bun run write:configs && bun run pouch:unpack && bun run create:icons && bun run typecheck && electron-vite build
+2025-08-22T18:10:31.0510610Z $ node ./scripts/write-configs.js
+2025-08-22T18:10:31.9880990Z 
+2025-08-22T18:10:31.9981490Z 
+2025-08-22T18:10:32.0084290Z          ⚠️   WARNING  ⚠️
+2025-08-22T18:10:32.0220750Z 
+2025-08-22T18:10:32.0222530Z The bootstrapUrl field in kangaroo.config.ts is still set to the testing bootstrap server URL.
+2025-08-22T18:10:32.0324570Z This server has no availability guarantees whatsoever and is meant for testing purposes only.
+2025-08-22T18:10:32.0424800Z 
+2025-08-22T18:10:32.0525910Z $ node ./scripts/unpack-pouch.js
+2025-08-22T18:10:32.0526400Z If you want to deploy your app to end-users, make sure to run your own
+2025-08-22T18:10:32.0546790Z instance of a bootstrap server or use a server that has guaranteed availability
+2025-08-22T18:10:32.0547350Z for the lifetime of your apps network(s).
+2025-08-22T18:10:32.0547610Z 
+2025-08-22T18:10:32.0548110Z Changing the bootstrap URL after deployment of your app can result in a network partition
+2025-08-22T18:10:32.0558550Z among users of your app.
+2025-08-22T18:10:32.0560660Z 
+2025-08-22T18:10:32.0563990Z   
+2025-08-22T18:10:32.0564270Z 
+2025-08-22T18:10:32.0564370Z 
+2025-08-22T18:10:32.0564700Z          ⚠️   WARNING  ⚠️
+2025-08-22T18:10:32.0564910Z 
+2025-08-22T18:10:32.0565300Z The signalUrl in kangaroo.config.ts is still set to the testing signaling server URL.
+2025-08-22T18:10:32.0565990Z This server has no availability guarantees whatsoever and is meant for testing purposes only.
+2025-08-22T18:10:32.0566350Z 
+2025-08-22T18:10:32.0566680Z If you want to deploy your app to end-users, make sure to run your own
+2025-08-22T18:10:32.0567240Z instance of a signaling server or use a server that has guaranteed availability
+2025-08-22T18:10:32.0567720Z for the lifetime of your apps network(s).
+2025-08-22T18:10:32.0567950Z 
+2025-08-22T18:10:32.0568320Z Changing the signaling server URL after deployment of your app can result in a
+2025-08-22T18:10:32.0568810Z network partition among users of your app.
+2025-08-22T18:10:32.0569060Z 
+2025-08-22T18:10:32.0569150Z 
+2025-08-22T18:10:32.5172750Z $ node ./scripts/create-icons.js
+2025-08-22T18:10:32.8616210Z Generating icon.ico
+2025-08-22T18:10:33.1136370Z Generating icon.icns
+2025-08-22T18:10:33.3900080Z Generating systray icon
+2025-08-22T18:10:33.4246690Z Generating notifications icon
+2025-08-22T18:10:33.4489840Z $ bun run typecheck:node && bun run typecheck:web
+2025-08-22T18:10:33.4567530Z $ tsc --noEmit -p tsconfig.node.json --composite false
+2025-08-22T18:10:34.8214950Z $ tsc --noEmit -p tsconfig.web.json --composite false
+2025-08-22T18:10:36.8634890Z [36mvite v4.5.14 [32mbuilding SSR bundle for production...[36m[39m
+2025-08-22T18:10:36.9441510Z transforming...
+2025-08-22T18:10:39.6679990Z [32m✓[39m 751 modules transformed.
+2025-08-22T18:10:40.0939690Z rendering chunks...
+2025-08-22T18:10:40.1040300Z [2mout/main/[22m[36mindex.js  [39m[1m[33m1,391.47 kB[39m[22m
+2025-08-22T18:10:40.1132740Z [32m✓ built in 3.23s[39m
+2025-08-22T18:10:40.1133660Z [36mvite v4.5.14 [32mbuilding SSR bundle for production...[36m[39m
+2025-08-22T18:10:40.1134180Z transforming...
+2025-08-22T18:10:40.1135370Z [32m✓[39m 2 modules transformed.
+2025-08-22T18:10:40.1136410Z rendering chunks...
+2025-08-22T18:10:40.1139300Z [2mout/preload/[22m[36mhapp.js          [39m[1m[2m0.21 kB[22m[1m[22m
+2025-08-22T18:10:40.1160260Z [2mout/preload/[22m[36msplashscreen.js  [39m[1m[2m0.77 kB[22m[1m[22m
+2025-08-22T18:10:40.1161220Z [32m✓ built in 9ms[39m
+2025-08-22T18:10:40.1163480Z [36mvite v4.5.14 [32mbuilding for production...[36m[39m
+2025-08-22T18:10:40.1586260Z transforming...
+2025-08-22T18:10:40.1880680Z [32m✓[39m 9 modules transformed.
+2025-08-22T18:10:40.1944930Z rendering chunks...
+2025-08-22T18:10:40.2003730Z [2m../../out/renderer/[22m[2massets/[22m[32mclose-339ae282.svg                 [39m[1m[2m 0.19 kB[22m[1m[22m
+2025-08-22T18:10:40.2007300Z [2m../../out/renderer/[22m[32mindexNotFound2.html                       [39m[1m[2m 0.90 kB[22m[1m[22m
+2025-08-22T18:10:40.2011210Z [2m../../out/renderer/[22m[32mindexNotFound.html                        [39m[1m[2m 0.93 kB[22m[1m[22m
+2025-08-22T18:10:40.2011990Z [2m../../out/renderer/[22m[32mloading.html                              [39m[1m[2m 1.77 kB[22m[1m[22m
+2025-08-22T18:10:40.2012780Z [2m../../out/renderer/[22m[32menterPassword.html                        [39m[1m[2m 4.29 kB[22m[1m[22m
+2025-08-22T18:10:40.2013500Z [2m../../out/renderer/[22m[32msetupPassword.html                        [39m[1m[2m 7.45 kB[22m[1m[22m
+2025-08-22T18:10:40.2014290Z [2m../../out/renderer/[22m[2massets/[22m[32mpowered_by_holochain-beebd2fe.png  [39m[1m[2m10.07 kB[22m[1m[22m
+2025-08-22T18:10:40.2015090Z [2m../../out/renderer/[22m[32msetupPasswordOptional.html                [39m[1m[2m10.60 kB[22m[1m[22m
+2025-08-22T18:10:40.2015900Z [2m../../out/renderer/[22m[2massets/[22m[35mindex-932c2c12.css                 [39m[1m[2m 2.18 kB[22m[1m[22m
+2025-08-22T18:10:40.2016500Z [32m✓ built in 89ms[39m
+2025-08-22T18:10:40.8394100Z   • electron-builder  version=24.13.3 os=24.5.0
+2025-08-22T18:10:40.8395350Z   • artifacts will be published if draft release exists  reason=CI detected
+2025-08-22T18:10:40.8482160Z   • loaded configuration  file=/Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron/electron-builder.yml
+2025-08-22T18:10:40.8490250Z   • description is missed in the package.json  appPackageFile=/Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron/package.json
+2025-08-22T18:10:40.8493520Z   • author is missed in the package.json  appPackageFile=/Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron/package.json
+2025-08-22T18:10:41.0628820Z   • skipped dependencies rebuild  reason=npmRebuild is set to false
+2025-08-22T18:10:41.0667110Z   • packaging       platform=darwin arch=arm64 electron=29.4.6 appOutDir=dist/mac-arm64
+2025-08-22T18:10:41.5554940Z   • downloading     url=https://github.com/electron/electron/releases/download/v29.4.6/electron-v29.4.6-darwin-arm64.zip size=95 MB parts=6
+2025-08-22T18:10:42.2176640Z   • downloaded      url=https://github.com/electron/electron/releases/download/v29.4.6/electron-v29.4.6-darwin-arm64.zip duration=1.038s
+2025-08-22T18:10:48.4194150Z   • skipped macOS application code signing  reason=, see https://electron.build/code-signing CSC_IDENTITY_AUTO_DISCOVERY=false
+2025-08-22T18:10:48.4203270Z   • building        target=macOS zip arch=arm64 file=dist/Requests and Offers-0.1.0-alpha.6-arm64-mac.zip
+2025-08-22T18:10:48.4205010Z   • building        target=DMG arch=arm64 file=dist/requests-and-offers.happenings-community.kangaroo-electron-0.1.0-alpha.6-arm64.dmg
+2025-08-22T18:10:48.4210820Z   • skipped dependencies rebuild  reason=npmRebuild is set to false
+2025-08-22T18:10:48.4211830Z   • packaging       platform=darwin arch=x64 electron=29.4.6 appOutDir=dist/mac
+2025-08-22T18:10:48.4391400Z   • Detected arm64 process, HFS+ is unavailable. Creating dmg with APFS - supports Mac OSX 10.12+
+2025-08-22T18:10:49.0886460Z   • downloading     url=https://github.com/electron/electron/releases/download/v29.4.6/electron-v29.4.6-darwin-x64.zip size=101 MB parts=6
+2025-08-22T18:10:50.3233640Z   • downloaded      url=https://github.com/electron/electron/releases/download/v29.4.6/electron-v29.4.6-darwin-x64.zip duration=1.886s
+2025-08-22T18:10:57.2646300Z   • skipped macOS application code signing  reason=, see https://electron.build/code-signing CSC_IDENTITY_AUTO_DISCOVERY=false
+2025-08-22T18:10:57.2740870Z   • building        target=macOS zip arch=x64 file=dist/Requests and Offers-0.1.0-alpha.6-mac.zip
+2025-08-22T18:10:57.2845320Z   • building        target=DMG arch=x64 file=dist/requests-and-offers.happenings-community.kangaroo-electron-0.1.0-alpha.6-x64.dmg
+2025-08-22T18:10:57.2947490Z   • Detected arm64 process, HFS+ is unavailable. Creating dmg with APFS - supports Mac OSX 10.12+
+2025-08-22T18:12:21.2475590Z   • building block map  blockMapFile=dist/Requests and Offers-0.1.0-alpha.6-arm64-mac.zip.blockmap
+2025-08-22T18:12:31.1854330Z   • building block map  blockMapFile=dist/Requests and Offers-0.1.0-alpha.6-mac.zip.blockmap
+2025-08-22T18:12:33.3058830Z   ⨯ Exit code: 1. Command failed: hdiutil attach -noverify -noautoopen -readwrite /private/var/folders/x7/ch5v91h56_zbvbd1y2f600dm0000gn/T/t-gr5LE8/1.dmg
+2025-08-22T18:12:33.3163310Z hdiutil: attach failed - Device not configured
+2025-08-22T18:12:33.3270240Z 
+2025-08-22T18:12:33.3333740Z hdiutil: attach failed - Device not configured
+2025-08-22T18:12:33.3379760Z   failedTask=build stackTrace=Error: Exit code: 1. Command failed: hdiutil attach -noverify -noautoopen -readwrite /private/var/folders/x7/ch5v91h56_zbvbd1y2f600dm0000gn/T/t-gr5LE8/1.dmg
+2025-08-22T18:12:33.3481520Z hdiutil: attach failed - Device not configured
+2025-08-22T18:12:33.3584610Z                                                                                                                                                                                                                                                              hdiutil: attach failed - Device not configured
+2025-08-22T18:12:33.3690260Z                                                                                                                                                                                                                                                                  at /Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron/node_modules/builder-util/src/util.ts:135:18
+2025-08-22T18:12:33.3794210Z     at ChildProcess.exithandler (node:child_process:424:5)
+2025-08-22T18:12:33.3896110Z     at ChildProcess.emit (node:events:518:28)
+2025-08-22T18:12:33.3985410Z     at maybeClose (node:internal/child_process:1101:16)
+2025-08-22T18:12:33.4084430Z     at Socket.<anonymous> (node:internal/child_process:456:11)
+2025-08-22T18:12:33.4186480Z     at Socket.emit (node:events:518:28)
+2025-08-22T18:12:33.4290510Z     at Pipe.<anonymous> (node:net:346:12)
+2025-08-22T18:12:33.4429320Z ##[error]Process completed with exit code 1.
+2025-08-22T18:12:33.4760510Z Post job cleanup.
+2025-08-22T18:12:33.9922610Z [command]/opt/homebrew/bin/git version
+2025-08-22T18:12:34.0492930Z git version 2.50.1
+2025-08-22T18:12:34.1035070Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/8fa392c1-3465-4a04-bc4b-f3f5d8c2a4e4/.gitconfig'
+2025-08-22T18:12:34.1277820Z Temporarily overriding HOME='/Users/runner/work/_temp/8fa392c1-3465-4a04-bc4b-f3f5d8c2a4e4' before making global git config changes
+2025-08-22T18:12:34.1380320Z Adding repository directory to the temporary git global config as a safe directory
+2025-08-22T18:12:34.1478220Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/requests-and-offers-kangaroo-electron/requests-and-offers-kangaroo-electron
+2025-08-22T18:12:34.1493740Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-08-22T18:12:34.1511780Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-08-22T18:12:34.3186670Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-08-22T18:12:34.3289020Z http.https://github.com/.extraheader
+2025-08-22T18:12:34.3526130Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-08-22T18:12:34.3830920Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-08-22T18:12:34.5386000Z Cleaning up orphan processes
