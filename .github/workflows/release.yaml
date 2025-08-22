@@ -24,6 +24,33 @@ jobs:
         with:
           node-version: 22
 
+      - name: setup bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # Install build tools for native dependencies
+      - name: Install build dependencies (Ubuntu)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential python3-dev node-gyp
+
+      - name: Install build dependencies (macOS)
+        if: matrix.platform == 'macos-13' || matrix.platform == 'macos-latest'
+        run: |
+          # Ensure Xcode command line tools are available
+          xcode-select --install || true
+          # Install node-gyp globally
+          npm install -g node-gyp
+
+      - name: Install build dependencies (Windows)
+        if: matrix.platform == 'windows-2022'
+        run: |
+          # Install Visual Studio build tools and node-gyp
+          npm install -g node-gyp
+          npm config set msvs_version 2022
+
       # This step is only used for testing in the official kangaroo repo
       - name: Overwrite Names for release testing
         if: ${{ github.repository }} == 'holochain-apps/kangaroo-electron'
