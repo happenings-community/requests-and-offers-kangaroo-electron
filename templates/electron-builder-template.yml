@@ -43,6 +43,4 @@ linux:
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
-# publish:
-#   provider: generic
-#   url: https://example.com/auto-updates
+publish: null  # Disable automatic publishing - let CI workflow handle uploads
