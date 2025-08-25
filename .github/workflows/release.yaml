@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - release
-      - test/macos-build-fix-alpha-6-1
 
 jobs:
   publish:
