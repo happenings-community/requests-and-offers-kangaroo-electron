@@ -17,7 +17,7 @@ export default defineConfig({
   iceUrls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'],
   bins: {
     holochain: {
-      version: '0.1.0-alpha.6',
+      version: '0.5.5',
       sha256: {
         'x86_64-unknown-linux-gnu':
           '8c1e0c6e72fb5dde157973ee280ee494bbbad1926820829339dc67b84bc86b6e',
@@ -28,7 +28,7 @@ export default defineConfig({
       },
     },
     lair: {
-      version: '0.1.0-alpha.6',
+      version: '0.4.0-rc.0',
       sha256: {
         'x86_64-unknown-linux-gnu':
           '3c9ea3dbfc0853743dad3874856fdcfe391dca1769a6a81fc91b7578c73e92a7',
