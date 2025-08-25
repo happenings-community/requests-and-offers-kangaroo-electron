@@ -28,11 +28,6 @@ mac:
       arch:
         - arm64
         - x64
-  # Ensure native deps are included
-  extraFiles:
-    - from: "node_modules/@holochain/hc-spin-rust-utils-darwin-${arch}"
-      to: "Resources/app.asar.unpacked/node_modules/@holochain/hc-spin-rust-utils-darwin-${arch}"
-      filter: ["**/*"]
   # Uncomment selectively for your application's purposes
   # extendInfo:
   # - NSCameraUsageDescription: Application requests access to the device's camera.
