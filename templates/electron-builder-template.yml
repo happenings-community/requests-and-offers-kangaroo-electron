@@ -8,6 +8,9 @@ files:
   - kangaroo.config.ts
 asarUnpack:
   - resources/**
+  - "node_modules/@holochain/hc-spin-rust-utils/**"
+  - "node_modules/@holochain/hc-spin-rust-utils-*/**"
+  - "**/*.node"
 # afterSign: scripts/notarize.js
 win:
   executableName: ____PLACEHOLDER____
@@ -18,11 +21,18 @@ nsis:
   createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
+  hardenedRuntime: true
+  gatekeeperAssess: false
   target:
     - target: default
       arch:
         - arm64
         - x64
+  # Ensure native deps are included
+  extraFiles:
+    - from: "node_modules/@holochain/hc-spin-rust-utils-darwin-${arch}"
+      to: "Resources/app.asar.unpacked/node_modules/@holochain/hc-spin-rust-utils-darwin-${arch}"
+      filter: ["**/*"]
   # Uncomment selectively for your application's purposes
   # extendInfo:
   # - NSCameraUsageDescription: Application requests access to the device's camera.
@@ -42,5 +52,8 @@ linux:
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
-npmRebuild: false
+npmRebuild: true
+includeSubNodeModules: true
+buildDependenciesFromSource: true
+nodeGypRebuild: false
 publish: null  # Disable automatic publishing - let CI workflow handle uploads

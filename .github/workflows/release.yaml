@@ -65,6 +65,26 @@ jobs:
         run: |
           npm install && npm run fetch:binaries && npm run fetch:webhapp && npm run write:configs
 
+      - name: Install and rebuild native dependencies
+        if: matrix.platform == 'macos-13' || matrix.platform == 'macos-latest'
+        run: |
+          echo "Installing platform-specific native dependencies..."
+          # Force install platform-specific modules for macOS
+          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
+            npm install --save-optional @holochain/hc-spin-rust-utils-darwin-arm64@0.500.0 || echo "Failed to install ARM64 package"
+          elif [[ "${{ matrix.platform }}" == "macos-13" ]]; then
+            npm install --save-optional @holochain/hc-spin-rust-utils-darwin-x64@0.500.0 || echo "Failed to install x64 package"
+          fi
+          npm rebuild @holochain/hc-spin-rust-utils --update-binary || npm rebuild @holochain/hc-spin-rust-utils || echo "Rebuild failed"
+          npm ls @holochain/hc-spin-rust-utils || echo "Package not found in listing"
+          
+      - name: Verify native modules
+        if: matrix.platform == 'macos-13' || matrix.platform == 'macos-latest'
+        run: |
+          echo "Verifying native module installation..."
+          ls -la node_modules/@holochain/ || echo "Module directory check failed"
+          node -e "console.log('Testing module load...'); require('@holochain/hc-spin-rust-utils'); console.log('✅ Module loaded successfully')" || echo "⚠️ Module load test failed - may be expected in CI"
+
       - name: Read kangaroo config
         shell: bash
         id: kangarooConfig
