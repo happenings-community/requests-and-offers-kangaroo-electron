@@ -15,8 +15,8 @@ const client = new Octokit({
   auth: token,
 });
 
-const OWNER = 'holochain';
-const REPO = 'launcher';
+const OWNER = 'happenings-community';
+const REPO = 'requests-and-offers-kangaroo-electron';
 const URL = `/repos/${OWNER}/${REPO}/releases`;
 const VERSION = pkg.version;
 const APP_ID = pkg.name;
