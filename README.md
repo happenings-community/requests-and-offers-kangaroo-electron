@@ -193,3 +193,5 @@ The latest release can be found in the [Releases](https://github.com/happenings-
 
 ### v0.1.0-alpha.6 - Exchanges Enhancement 
 Complete exchanges system with comprehensive response approval/rejection, bidirectional response management, and singleton store pattern implementation. Enhanced automated deployment with cross-platform binary compatibility.
+
+**Release Status**: Desktop builds for Windows, macOS (Intel & ARM64), and Linux (AppImage & .deb) are available.
