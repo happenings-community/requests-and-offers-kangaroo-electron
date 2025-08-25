@@ -28,7 +28,7 @@ export default defineConfig({
       },
     },
     lair: {
-      version: '0.4.2',
+      version: '0.6.2',
       sha256: {
         'x86_64-unknown-linux-gnu':
           '3c9ea3dbfc0853743dad3874856fdcfe391dca1769a6a81fc91b7578c73e92a7',
