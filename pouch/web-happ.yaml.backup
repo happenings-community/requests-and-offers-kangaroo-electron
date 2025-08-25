@@ -1,0 +1,8 @@
+---
+manifest_version: "1"
+name: requests_and_offers
+description: "Requests and offers distributed marketplace for hAppenings community."
+ui:
+  bundled: "../resources/ui/dist.zip"
+happ_manifest:
+  bundled: "../resources/requests_and_offers.happ"

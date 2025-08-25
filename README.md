@@ -186,3 +186,10 @@ Options:
   --print-holochain-logs         Print holochain logs directly to the terminal (they will be still written to the logfile as well)
   -h, --help                     display help for command
 ```
+
+## Downloads
+
+The latest release can be found in the [Releases](https://github.com/happenings-community/requests-and-offers-kangaroo-electron/releases) section.
+
+### v0.1.0-alpha.6.1 - macOS Native Module Fix
+This release fixes the critical macOS launch issue where the app crashed with native module loading errors. The fix includes updated electron-builder configuration and enhanced CI/CD pipeline with platform-specific dependency handling.

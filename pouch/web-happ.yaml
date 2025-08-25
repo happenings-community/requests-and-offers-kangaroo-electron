@@ -1,8 +1,3 @@
----
-manifest_version: "1"
-name: requests_and_offers
-description: "Requests and offers distributed marketplace for hAppenings community."
-ui:
-  bundled: "../resources/ui/dist.zip"
-happ_manifest:
-  bundled: "../resources/requests_and_offers.happ"
+name: "Requests and Offers"
+description: "Holochain app for community requests and offers exchange"
+webhapp_url: "https://github.com/happenings-community/requests-and-offers/releases/download/v0.1.0-alpha.6/requests_and_offers.webhapp"
