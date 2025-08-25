@@ -121,6 +121,12 @@ jobs:
         run: |
           npm run build:mac-x64
           ls dist
+          
+          # Upload macOS x64 assets to release
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-mac.zip" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-mac.zip.blockmap" --clobber
 
       - name: build and upload the app WITHOUT code signing (macOS arm64)
         if: matrix.platform == 'macos-latest' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'false'
@@ -130,6 +136,12 @@ jobs:
         run: |
           npm run build:mac-arm64
           ls dist
+          
+          # Upload macOS ARM64 assets to release
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64-mac.zip" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64-mac.zip.blockmap" --clobber
 
       # macOS WITH code signing
       #---------------------------------------------------------------------------------------
@@ -189,6 +201,7 @@ jobs:
           node ./scripts/extend-deb-postinst.mjs
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "latest-linux.yml" --clobber
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}.AppImage" --clobber
 
       # Windows
       #---------------------------------------------------------------------------------------
@@ -220,6 +233,28 @@ jobs:
             gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "latest.yml" --clobber
             gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
 
+          else
+            # Upload Windows assets without code signing
+            echo "Code signing disabled - uploading unsigned assets"
+            
+            # Create latest.yml for unsigned build
+            if [ ! -f "dist/latest.yml" ]; then
+              echo "Creating latest.yml for unsigned Windows build"
+              cat > dist/latest.yml << EOF
+          version: ${{ steps.kangarooConfig.outputs.APP_VERSION }}
+          files:
+            - url: ${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe
+              sha512: $(cat dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap | head -n1 | cut -d' ' -f1)
+              size: $(stat -c%s "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe")
+          path: ${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe
+          sha512: $(cat dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap | head -n1 | cut -d' ' -f1)
+          releaseDate: $(date -Iseconds)
+          EOF
+            fi
+            
+            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/latest.yml" --clobber
+            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
+            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap" --clobber
           fi
 
       - name: Merge latest-mac.yml mac release files
