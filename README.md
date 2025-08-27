@@ -214,15 +214,3 @@ During alpha testing, you may need to refresh your agent data to start with a cl
    - **Linux**: `~/.config/Requests and Offers/` or `~/.local/share/Requests and Offers/`
 
 3. **Restart the application** - it will generate a new agent identity and start fresh
-
-**Alternative (Recommended for Testing):**
-Instead of deleting data, use command-line profiles for clean testing environments:
-```bash
-# Run with a test profile
-./requests-and-offers --profile alpha-test-clean
-
-# Run with specific network seed
-./requests-and-offers --profile alpha-test --network-seed "alpha-test-seed-2024"
-```
-
-This keeps your main data intact while providing isolated testing environments.
