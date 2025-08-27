@@ -186,3 +186,43 @@ Options:
   --print-holochain-logs         Print holochain logs directly to the terminal (they will be still written to the logfile as well)
   -h, --help                     display help for command
 ```
+
+## Downloads
+
+The latest release can be found in the [Releases](https://github.com/happenings-community/requests-and-offers-kangaroo-electron/releases) section.
+
+### v0.1.0-alpha.6 - Exchanges Enhancement
+Complete exchanges system with comprehensive response approval/rejection, bidirectional response management, and singleton store pattern implementation. Enhanced automated deployment with cross-platform binary compatibility.
+
+**Release Status**: Desktop builds for Windows, macOS (Intel & ARM64), and Linux (AppImage & .deb) are available.
+
+#### Alpha Testing: Refreshing Agent Data
+
+During alpha testing, you may need to refresh your agent data to start with a clean slate. This is useful for testing new features, resolving data corruption, or starting over with a new agent identity.
+
+**⚠️ Warning**: This will permanently delete all your local app data including your agent identity, requests, offers, and profile information.
+
+**Step-by-Step Instructions:**
+
+1. **Close the application completely**
+   - Windows/Linux: Close app window and check system tray
+   - macOS: Quit the app completely (Cmd+Q)
+
+2. **Delete the data directory** for your platform:
+   - **macOS**: `~/Library/Application Support/Requests and Offers/`
+   - **Windows**: `%APPDATA%\Requests and Offers\` or `C:\Users\[YourUsername]\AppData\Roaming\Requests and Offers\`
+   - **Linux**: `~/.config/Requests and Offers/` or `~/.local/share/Requests and Offers/`
+
+3. **Restart the application** - it will generate a new agent identity and start fresh
+
+**Alternative (Recommended for Testing):**
+Instead of deleting data, use command-line profiles for clean testing environments:
+```bash
+# Run with a test profile
+./requests-and-offers --profile alpha-test-clean
+
+# Run with specific network seed
+./requests-and-offers --profile alpha-test --network-seed "alpha-test-seed-2024"
+```
+
+This keeps your main data intact while providing isolated testing environments.
