@@ -1,7 +1,7 @@
 import { defineConfig } from './src/main/defineConfig';
 
-export default defineConfig({
-  // Alpha 6 release with comprehensive exchanges system and Effect-first architecture
+const config = defineConfig({
+  // Alpha 7 release with production bootstrap server
   appId: 'requests-and-offers.happenings-community.kangaroo-electron',
   productName: 'Requests and Offers',
   version: '0.1.0-alpha.7',
@@ -40,3 +40,48 @@ export default defineConfig({
     },
   },
 });
+
+// Production deployment validation
+// This prevents accidentally deploying with test servers in production
+if (process.env.NODE_ENV === 'production' || process.env.CI === 'true') {
+  const productionBootstrapUrl = 'https://holostrap.elohim.host/';
+  const productionSignalUrl = 'wss://holostrap.elohim.host/';
+  
+  if (!config.bootstrapUrl || config.bootstrapUrl !== productionBootstrapUrl) {
+    console.error(`
+❌ DEPLOYMENT ERROR: Invalid bootstrap server for production!
+Current: ${config.bootstrapUrl || 'undefined'}
+Expected: ${productionBootstrapUrl}
+
+Please update kangaroo.config.ts to use the production bootstrap server.
+    `);
+    process.exit(1);
+  }
+  
+  if (!config.signalUrl || config.signalUrl !== productionSignalUrl) {
+    console.error(`
+❌ DEPLOYMENT ERROR: Invalid signal server for production!
+Current: ${config.signalUrl || 'undefined'}
+Expected: ${productionSignalUrl}
+
+Please update kangaroo.config.ts to use the production signal server.
+    `);
+    process.exit(1);
+  }
+  
+  // Check for test server patterns
+  if (config.bootstrapUrl?.includes('dev-test') || config.bootstrapUrl?.includes('test')) {
+    console.error(`
+❌ DEPLOYMENT ERROR: Test bootstrap server detected in production!
+Current: ${config.bootstrapUrl}
+Expected: ${productionBootstrapUrl}
+
+Test servers should not be used in production deployments.
+    `);
+    process.exit(1);
+  }
+  
+  console.log('✅ Production server validation passed');
+}
+
+export default config;
