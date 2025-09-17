@@ -179,6 +179,7 @@ jobs:
         if: matrix.platform == 'ubuntu-22.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APP_VERSION: ${{ steps.kangarooConfig.outputs.APP_VERSION }}
         run: |
           npm run build:linux
           ls dist
@@ -187,23 +188,21 @@ jobs:
           APP_ID=$(node ./scripts/read-app-id.js)
           if [ ! -f "dist/latest-linux.yml" ]; then
             echo "Creating dummy latest-linux.yml for deb modification script"
-            cat > dist/latest-linux.yml << EOF
-version: ${{ steps.kangarooConfig.outputs.APP_VERSION }}
-files:
-  - url: ${APP_ID}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb
-    sha512: dummy
-    size: 0
-path: ${APP_ID}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb
-sha512: dummy
-releaseDate: $(date -Iseconds)
-EOF
+            echo "version: ${APP_VERSION}" > dist/latest-linux.yml
+            echo "files:" >> dist/latest-linux.yml
+            echo "  - url: ${APP_ID}_${APP_VERSION}_amd64.deb" >> dist/latest-linux.yml
+            echo "    sha512: dummy" >> dist/latest-linux.yml
+            echo "    size: 0" >> dist/latest-linux.yml
+            echo "path: ${APP_ID}_${APP_VERSION}_amd64.deb" >> dist/latest-linux.yml
+            echo "sha512: dummy" >> dist/latest-linux.yml
+            echo "releaseDate: $(date -Iseconds)" >> dist/latest-linux.yml
           fi
 
           # Modify the postinst script of the .deb file
           node ./scripts/extend-deb-postinst.mjs
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "latest-linux.yml" --clobber
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb" --clobber
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}.AppImage" --clobber
+          gh release upload "v${APP_VERSION}" "latest-linux.yml" --clobber
+          gh release upload "v${APP_VERSION}" "dist/${APP_ID}_${APP_VERSION}_amd64.deb" --clobber
+          gh release upload "v${APP_VERSION}" "dist/${APP_ID}-${APP_VERSION}.AppImage" --clobber
 
       # Windows
       #---------------------------------------------------------------------------------------
