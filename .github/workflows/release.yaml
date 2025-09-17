@@ -92,7 +92,6 @@ jobs:
         id: kangarooConfig
         run: |
           echo "APP_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
-          echo "APP_ID=$(node ./scripts/read-app-id.js)" >> $GITHUB_OUTPUT
           echo "MACOS_CODE_SIGNING=$(node ./scripts/read-macos-code-signing.js)" >> $GITHUB_OUTPUT
           echo "WINDOWS_CODE_SIGNING=$(node ./scripts/read-windows-code-signing.js)" >> $GITHUB_OUTPUT
 
@@ -123,9 +122,10 @@ jobs:
           ls dist
           
           # Upload macOS x64 assets to release
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg" --clobber
+          APP_ID=$(node ./scripts/read-app-id.js)
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg" --clobber
           # Upload blockmap files only if they exist
-          [ -f "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" ] && gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" --clobber || echo "DMG blockmap not found, skipping"
+          [ -f "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" ] && gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" --clobber || echo "DMG blockmap not found, skipping"
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-mac.zip" --clobber
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-mac.zip.blockmap" --clobber
 
@@ -139,9 +139,10 @@ jobs:
           ls dist
           
           # Upload macOS ARM64 assets to release
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg" --clobber
+          APP_ID=$(node ./scripts/read-app-id.js)
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg" --clobber
           # Upload blockmap files only if they exist
-          [ -f "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" ] && gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" --clobber || echo "DMG blockmap not found, skipping"
+          [ -f "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" ] && gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" --clobber || echo "DMG blockmap not found, skipping"
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64-mac.zip" --clobber
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64-mac.zip.blockmap" --clobber
 
@@ -190,10 +191,10 @@ jobs:
             cat > dist/latest-linux.yml << EOF
           version: ${{ steps.kangarooConfig.outputs.APP_VERSION }}
           files:
-            - url: ${{ steps.kangarooConfig.outputs.APP_ID }}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb
+            - url: $(node ./scripts/read-app-id.js)_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb
               sha512: dummy
               size: 0
-          path: ${{ steps.kangarooConfig.outputs.APP_ID }}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb
+          path: $(node ./scripts/read-app-id.js)_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb
           sha512: dummy
           releaseDate: $(date -Iseconds)
           EOF
@@ -201,9 +202,10 @@ jobs:
 
           # Modify the postinst script of the .deb file
           node ./scripts/extend-deb-postinst.mjs
+          APP_ID=$(node ./scripts/read-app-id.js)
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "latest-linux.yml" --clobber
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb" --clobber
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}.AppImage" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}.AppImage" --clobber
 
       # Windows
       #---------------------------------------------------------------------------------------
@@ -223,40 +225,42 @@ jobs:
             # https://melatonin.dev/blog/how-to-code-sign-windows-installers-with-an-ev-cert-on-github-actions/
 
             # Sign the .exe file
+            APP_ID=$(node ./scripts/read-app-id.js)
             dotnet tool install --global --version 4.0.1 AzureSignTool
             echo "sha512 before code signing"
-            CertUtil -hashfile "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" SHA512
-            AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe"
+            CertUtil -hashfile "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" SHA512
+            AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe"
             echo "sha512 after code signing"
-            CertUtil -hashfile "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" SHA512
+            CertUtil -hashfile "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" SHA512
 
             # Overwrite the latest.yml one with one containing the sha512 of the code signed .exe file
             node ./scripts/latest-yaml.js
             gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "latest.yml" --clobber
-            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
+            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
 
           else
             # Upload Windows assets without code signing
             echo "Code signing disabled - uploading unsigned assets"
             
             # Create latest.yml for unsigned build
+            APP_ID=$(node ./scripts/read-app-id.js)
             if [ ! -f "dist/latest.yml" ]; then
               echo "Creating latest.yml for unsigned Windows build"
               cat > dist/latest.yml << EOF
           version: ${{ steps.kangarooConfig.outputs.APP_VERSION }}
           files:
-            - url: ${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe
-              sha512: $(cat dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap | head -n1 | cut -d' ' -f1)
-              size: $(stat -c%s "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe")
-          path: ${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe
-          sha512: $(cat dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap | head -n1 | cut -d' ' -f1)
+            - url: $APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe
+              sha512: $(cat dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap | head -n1 | cut -d' ' -f1)
+              size: $(stat -c%s "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe")
+          path: $APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe
+          sha512: $(cat dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap | head -n1 | cut -d' ' -f1)
           releaseDate: $(date -Iseconds)
           EOF
             fi
             
             gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/latest.yml" --clobber
-            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
-            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap" --clobber
+            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
+            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap" --clobber
           fi
 
       - name: Merge latest-mac.yml mac release files
