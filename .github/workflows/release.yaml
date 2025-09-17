@@ -92,8 +92,6 @@ jobs:
         id: kangarooConfig
         run: |
           echo "APP_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
-          echo "MACOS_CODE_SIGNING=$(node ./scripts/read-macos-code-signing.js)" >> $GITHUB_OUTPUT
-          echo "WINDOWS_CODE_SIGNING=$(node ./scripts/read-windows-code-signing.js)" >> $GITHUB_OUTPUT
 
       - name: Check that webhapp is available in pouch folder
         shell: bash
@@ -104,7 +102,7 @@ jobs:
           fi
 
       - name: Setup for macOS code signing
-        if: (matrix.platform == 'macos-13' || matrix.platform == 'macos-latest') && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'true'
+        if: (matrix.platform == 'macos-13' || matrix.platform == 'macos-latest') && false
         uses: matthme/import-codesign-certs@5565bb656f60c98c8fc515f3444dd8db73545dc2
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE }}
@@ -113,7 +111,7 @@ jobs:
       # macOS WITHOUT code signing
       #---------------------------------------------------------------------------------------
       - name: build and upload the app WITHOUT code signing (macOS x86)
-        if: matrix.platform == 'macos-13' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'false'
+        if: matrix.platform == 'macos-13'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
@@ -130,7 +128,7 @@ jobs:
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-mac.zip.blockmap" --clobber
 
       - name: build and upload the app WITHOUT code signing (macOS arm64)
-        if: matrix.platform == 'macos-latest' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'false'
+        if: matrix.platform == 'macos-latest'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
@@ -150,7 +148,7 @@ jobs:
       #---------------------------------------------------------------------------------------
       # Note this issue regarding the if condition: https://github.com/actions/runner/issues/1173
       - name: build and upload the app WITH code signing (macOS x86)
-        if: matrix.platform == 'macos-13' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'true'
+        if: matrix.platform == 'macos-13' && false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_DEV_IDENTITY: ${{ secrets.APPLE_DEV_IDENTITY }}
@@ -163,7 +161,7 @@ jobs:
           ls dist
 
       - name: build and upload the app WITH code signing (macOS arm64)
-        if: matrix.platform == 'macos-latest' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'true'
+        if: matrix.platform == 'macos-latest' && false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_DEV_IDENTITY: ${{ secrets.APPLE_DEV_IDENTITY }}
@@ -219,7 +217,7 @@ jobs:
           ls dist
 
           # If Windows EV code signing is set to true in kangaroo.config.ts, do code signing here
-          if [ "${{ steps.kangarooConfig.outputs.WINDOWS_CODE_SIGNING }}" == "true" ]; then
+          if [ "$(node ./scripts/read-windows-code-signing.js)" == "true" ]; then
 
             # Assumes this setup of EV certificates:
             # https://melatonin.dev/blog/how-to-code-sign-windows-installers-with-an-ev-cert-on-github-actions/
