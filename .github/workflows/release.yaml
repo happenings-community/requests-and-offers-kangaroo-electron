@@ -92,15 +92,24 @@ jobs:
         id: kangarooConfig
         run: |
           APP_VERSION=$(node -p -e "require('./package.json').version")
-          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_OUTPUT
+          echo "APP_VERSION<<EOF" >> $GITHUB_OUTPUT
+          echo "$APP_VERSION" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
           APP_ID=$(node ./scripts/read-app-id.js)
           echo "APP_ID<<EOF" >> $GITHUB_OUTPUT
           echo "$APP_ID" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+          
           MACOS_CODE_SIGNING=$(node ./scripts/read-macos-code-signing.js)
-          echo "MACOS_CODE_SIGNING=$MACOS_CODE_SIGNING" >> $GITHUB_OUTPUT
+          echo "MACOS_CODE_SIGNING<<EOF" >> $GITHUB_OUTPUT
+          echo "$MACOS_CODE_SIGNING" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
           WINDOWS_CODE_SIGNING=$(node ./scripts/read-windows-code-signing.js)
-          echo "WINDOWS_CODE_SIGNING=$WINDOWS_CODE_SIGNING" >> $GITHUB_OUTPUT
+          echo "WINDOWS_CODE_SIGNING<<EOF" >> $GITHUB_OUTPUT
+          echo "$WINDOWS_CODE_SIGNING" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Check that webhapp is available in pouch folder
         shell: bash
