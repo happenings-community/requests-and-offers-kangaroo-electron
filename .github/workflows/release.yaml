@@ -124,7 +124,8 @@ jobs:
           
           # Upload macOS x64 assets to release
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg" --clobber
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" --clobber
+          # Upload blockmap files only if they exist
+          [ -f "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" ] && gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" --clobber || echo "DMG blockmap not found, skipping"
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-mac.zip" --clobber
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-mac.zip.blockmap" --clobber
 
@@ -139,7 +140,8 @@ jobs:
           
           # Upload macOS ARM64 assets to release
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg" --clobber
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" --clobber
+          # Upload blockmap files only if they exist
+          [ -f "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" ] && gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" --clobber || echo "DMG blockmap not found, skipping"
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64-mac.zip" --clobber
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64-mac.zip.blockmap" --clobber
 
