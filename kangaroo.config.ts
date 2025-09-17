@@ -81,7 +81,10 @@ Test servers should not be used in production deployments.
     process.exit(1);
   }
   
-  console.log('✅ Production server validation passed');
+  // Only log validation success when not being required by scripts
+  if (require.main === module) {
+    console.log('✅ Production server validation passed');
+  }
 }
 
 export default config;
