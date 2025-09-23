@@ -284,23 +284,59 @@ app.whenReady().then(async () => {
   });
 
   ipcMain.handle('setup-network', async (_e, config: { action: 'create' | 'join', instanceName: string, networkSeed?: string }) => {
-    const crypto = require('crypto');
-    
-    let networkSeed: string;
-    if (config.action === 'create') {
-      networkSeed = crypto.randomBytes(32).toString('hex');
-    } else {
-      if (!config.networkSeed) throw new Error('Network seed required');
-      networkSeed = config.networkSeed;
+    try {
+      // Input validation
+      if (!config?.action || !config?.instanceName) {
+        throw new Error('Missing required parameters: action and instanceName are required');
+      }
+      
+      if (!['create', 'join'].includes(config.action)) {
+        throw new Error('Invalid action: must be either "create" or "join"');
+      }
+      
+      if (config.instanceName.trim().length === 0) {
+        throw new Error('Instance name cannot be empty');
+      }
+      
+      const crypto = require('crypto');
+      let networkSeed: string;
+      
+      if (config.action === 'create') {
+        networkSeed = crypto.randomBytes(32).toString('hex');
+      } else {
+        if (!config.networkSeed || config.networkSeed.trim().length === 0) {
+          throw new Error('Network seed is required when joining an existing network');
+        }
+        
+        // Basic validation for network seed format (hex string)
+        if (!/^[a-fA-F0-9]{64}$/.test(config.networkSeed.trim())) {
+          throw new Error('Invalid network seed format: must be a 64-character hexadecimal string');
+        }
+        
+        networkSeed = config.networkSeed.trim();
+      }
+      
+      // Save network configuration
+      KANGAROO_FILESYSTEM.saveNetworkConfig({
+        instanceName: config.instanceName.trim(),
+        networkSeed: networkSeed
+      });
+      
+      // Update runtime options
+      RUN_OPTIONS.networkSeed = networkSeed;
+      
+      return { 
+        success: true,
+        networkSeed, 
+        instanceName: config.instanceName.trim() 
+      };
+    } catch (error) {
+      console.error('Network setup failed:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      };
     }
-    
-    KANGAROO_FILESYSTEM.saveNetworkConfig({
-      instanceName: config.instanceName,
-      networkSeed: networkSeed
-    });
-    
-    RUN_OPTIONS.networkSeed = networkSeed;
-    return { networkSeed, instanceName: config.instanceName };
   });
 
     // ------------------------------------------------------------------------------------

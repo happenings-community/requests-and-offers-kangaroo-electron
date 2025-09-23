@@ -99,26 +99,57 @@ export class KangarooFileSystem {
 
   // Network configuration methods
   public saveNetworkConfig(config: { instanceName: string, networkSeed: string }) {
-    const configPath = path.join(this.profileConfigDir, 'network-config.json');
+    try {
+      const configPath = path.join(this.profileConfigDir, 'network-config.json');
 
-    if (!fs.existsSync(this.profileConfigDir)) {
-      fs.mkdirSync(this.profileConfigDir, { recursive: true });
+      if (!fs.existsSync(this.profileConfigDir)) {
+        fs.mkdirSync(this.profileConfigDir, { recursive: true });
+      }
+      
+      // Validate config before saving
+      if (!config.instanceName || !config.networkSeed) {
+        throw new Error('Invalid network configuration: instanceName and networkSeed are required');
+      }
+      
+      fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
+      console.log('Network configuration saved successfully');
+    } catch (error) {
+      console.error('Failed to save network configuration:', error);
+      throw error;
     }
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
   }
 
   public loadNetworkConfig(): { instanceName: string, networkSeed: string } | null {
-    const configPath = path.join(this.profileConfigDir, 'network-config.json');
-    if (!fs.existsSync(configPath)) {
+    try {
+      const configPath = path.join(this.profileConfigDir, 'network-config.json');
+      if (!fs.existsSync(configPath)) {
+        return null;
+      }
+      
+      const data = fs.readFileSync(configPath, 'utf-8');
+      const config = JSON.parse(data);
+      
+      // Validate loaded config
+      if (!config.instanceName || !config.networkSeed) {
+        console.warn('Invalid network configuration found, ignoring');
+        return null;
+      }
+      
+      return config;
+    } catch (error) {
+      console.error('Failed to load network configuration:', error);
       return null;
     }
-    const data = fs.readFileSync(configPath, 'utf-8');
-    return JSON.parse(data);
   }
 
   public hasNetworkConfig(): boolean {
-    const configPath = path.join(this.profileConfigDir, 'network-config.json');
-    return fs.existsSync(configPath);
+    try {
+      const configPath = path.join(this.profileConfigDir, 'network-config.json');
+      return fs.existsSync(configPath);
+    } catch (error) {
+      console.error('Failed to check network configuration:', error);
+      return false;
+    }
   }
 
   async openLogs() {
