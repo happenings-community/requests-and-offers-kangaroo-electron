@@ -16,4 +16,4 @@ if (fs.existsSync(uiDir)) {
 }
 fs.mkdirSync(uiDir, { recursive: true });
 
-rustUtils.saveHappOrWebhapp(webhappPath, 'kangaroo', uiDir, resourcesDir);
+rustUtils.saveHappOrWebhapp(webhappPath, 'requests_and_offers', uiDir, resourcesDir);

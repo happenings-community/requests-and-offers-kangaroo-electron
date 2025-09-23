@@ -231,21 +231,26 @@ app.whenReady().then(async () => {
   // Will be called by the splashscreen UI in the "password-optional"
   // or "user-provided" password modes
   ipcMain.handle('launch', async (_e, passwordInput: PasswordType): Promise<void> => {
-    const { lairHandle, holochainManager, mainWindow, zomeCallSigner } = await launch(
-      KANGAROO_FILESYSTEM,
-      KANGAROO_EMITTER,
-      SPLASH_SCREEN_WINDOW,
-      passwordInput,
-      RUN_OPTIONS
-    );
+    try {
+      const { lairHandle, holochainManager, mainWindow, zomeCallSigner } = await launch(
+        KANGAROO_FILESYSTEM,
+        KANGAROO_EMITTER,
+        SPLASH_SCREEN_WINDOW,
+        passwordInput,
+        RUN_OPTIONS
+      );
 
-    LAIR_HANDLE = lairHandle;
-    HOLOCHAIN_MANAGER = holochainManager;
-    MAIN_WINDOW = mainWindow;
-    ZOME_CALL_SIGNER = zomeCallSigner;
+      LAIR_HANDLE = lairHandle;
+      HOLOCHAIN_MANAGER = holochainManager;
+      MAIN_WINDOW = mainWindow;
+      ZOME_CALL_SIGNER = zomeCallSigner;
 
-    if (KANGAROO_CONFIG.systray) {
-      MAIN_WINDOW.on('close', mainWindowCloseHandler);
+      if (KANGAROO_CONFIG.systray) {
+        MAIN_WINDOW.on('close', mainWindowCloseHandler);
+      }
+    } catch (error) {
+      console.error('Launch failed:', error);
+      throw error; // This ensures the error is sent back to the renderer process
     }
   });
   ipcMain.handle('open-logs', async () => KANGAROO_FILESYSTEM.openLogs());
