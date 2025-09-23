@@ -97,6 +97,30 @@ export class KangarooFileSystem {
     return fs.existsSync(pwPath);
   }
 
+  // Network configuration methods
+  public saveNetworkConfig(config: { instanceName: string, networkSeed: string }) {
+    const configPath = path.join(this.profileConfigDir, 'network-config.json');
+
+    if (!fs.existsSync(this.profileConfigDir)) {
+      fs.mkdirSync(this.profileConfigDir, { recursive: true });
+    }
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
+  }
+
+  public loadNetworkConfig(): { instanceName: string, networkSeed: string } | null {
+    const configPath = path.join(this.profileConfigDir, 'network-config.json');
+    if (!fs.existsSync(configPath)) {
+      return null;
+    }
+    const data = fs.readFileSync(configPath, 'utf-8');
+    return JSON.parse(data);
+  }
+
+  public hasNetworkConfig(): boolean {
+    const configPath = path.join(this.profileConfigDir, 'network-config.json');
+    return fs.existsSync(configPath);
+  }
+
   async openLogs() {
     try {
       await shell.openPath(this.profileLogsDir);

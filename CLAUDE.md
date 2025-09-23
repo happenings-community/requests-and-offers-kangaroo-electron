@@ -139,7 +139,7 @@ Use CLI flags for testing different configurations:
 
 ## Important Files
 
-- `pouch/requests_and_offers.webhapp` - The Holochain application bundle
+- `pouch/requests_and_offers.webhapp` - The Holochain application bundle (Ensure it is up-to-date)
 - `resources/` - Generated at build time, contains UI assets and icons
 - `out/` - Electron-vite build output
 - `dist/` - Final packaged applications

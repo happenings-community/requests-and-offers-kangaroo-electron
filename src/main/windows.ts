@@ -202,6 +202,10 @@ export const createSplashWindow = (type: SplashScreenType): BrowserWindow => {
       htmlFile = 'loading.html';
       break;
     }
+    case SplashScreenType.NetworkSetup: {
+      htmlFile = 'networkSetup.html';
+      break;
+    }
     case SplashScreenType.PasswordSetup: {
       htmlFile = 'setupPassword.html';
       break;

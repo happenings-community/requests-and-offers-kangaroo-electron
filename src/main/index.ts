@@ -173,7 +173,17 @@ app.whenReady().then(async () => {
   let splashScreenType: SplashScreenType;
   let startImmediately = false;
 
-  if (KANGAROO_CONFIG.passwordMode === 'no-password') {
+  // Check for network configuration first
+  if (!KANGAROO_FILESYSTEM.hasNetworkConfig()) {
+    splashScreenType = SplashScreenType.NetworkSetup;
+    startImmediately = false;
+  } else {
+    const networkConfig = KANGAROO_FILESYSTEM.loadNetworkConfig();
+    if (networkConfig) {
+      RUN_OPTIONS.networkSeed = networkConfig.networkSeed;
+    }
+
+    if (KANGAROO_CONFIG.passwordMode === 'no-password') {
     splashScreenType = SplashScreenType.LoadingOnly;
     startImmediately = true;
   } else if (KANGAROO_CONFIG.passwordMode === 'password-required') {
@@ -199,6 +209,7 @@ app.whenReady().then(async () => {
         KANGAROO_CONFIG.passwordMode
       }\nRandom pw exists: ${KANGAROO_FILESYSTEM.randomPasswordExists()}`
     );
+  }
   }
 
   /**
@@ -270,7 +281,28 @@ app.whenReady().then(async () => {
       app.relaunch(options);
       app.quit();
     }
-  }),
+  });
+
+  ipcMain.handle('setup-network', async (_e, config: { action: 'create' | 'join', instanceName: string, networkSeed?: string }) => {
+    const crypto = require('crypto');
+    
+    let networkSeed: string;
+    if (config.action === 'create') {
+      networkSeed = crypto.randomBytes(32).toString('hex');
+    } else {
+      if (!config.networkSeed) throw new Error('Network seed required');
+      networkSeed = config.networkSeed;
+    }
+    
+    KANGAROO_FILESYSTEM.saveNetworkConfig({
+      instanceName: config.instanceName,
+      networkSeed: networkSeed
+    });
+    
+    RUN_OPTIONS.networkSeed = networkSeed;
+    return { networkSeed, instanceName: config.instanceName };
+  });
+
     // ------------------------------------------------------------------------------------
 
     (SPLASH_SCREEN_WINDOW = createSplashWindow(splashScreenType));
