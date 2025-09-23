@@ -8,6 +8,8 @@ files:
   - kangaroo.config.ts
 asarUnpack:
   - resources/**
+  - resources/kangaroo.happ
+  - resources/requests_and_offers.happ
   - node_modules/@holochain/hc-spin-rust-utils/**
   - node_modules/@holochain/hc-spin-rust-utils-*/**
   - '**/*.node'
@@ -40,7 +42,7 @@ linux:
 appImage:
   artifactName: ${name}-${version}.${ext}
   # Explicitly include resources directory for AppImage
-  extraFiles:
+  extraResources:
     - from: resources
       to: resources
 npmRebuild: true
