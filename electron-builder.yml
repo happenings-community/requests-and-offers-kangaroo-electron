@@ -1,0 +1,50 @@
+appId: requests-and-offers.happenings-community.kangaroo-electron
+productName: Requests and Offers
+directories:
+  buildResources: build
+files:
+  - resources
+  - out
+  - kangaroo.config.ts
+asarUnpack:
+  - resources/**
+  - node_modules/@holochain/hc-spin-rust-utils/**
+  - node_modules/@holochain/hc-spin-rust-utils-*/**
+  - '**/*.node'
+win:
+  executableName: requests-and-offers.happenings-community.kangaroo-electron
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
+mac:
+  entitlementsInherit: build/entitlements.mac.plist
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  target:
+    - target: default
+      arch:
+        - arm64
+        - x64
+  notarize: false
+dmg:
+  artifactName: ${name}-${version}-${arch}.${ext}
+  writeUpdateInfo: false
+linux:
+  target:
+    - AppImage
+    - deb
+  maintainer: electronjs.org
+  category: Utility
+appImage:
+  artifactName: ${name}-${version}.${ext}
+  # Explicitly include resources directory for AppImage
+  extraFiles:
+    - from: resources
+      to: resources
+npmRebuild: true
+includeSubNodeModules: true
+buildDependenciesFromSource: true
+nodeGypRebuild: false
+publish: null
