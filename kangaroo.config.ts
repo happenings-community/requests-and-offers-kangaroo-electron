@@ -1,10 +1,10 @@
 import { defineConfig } from './src/main/defineConfig';
 
 export default defineConfig({
-  // Alpha 6 release with comprehensive exchanges system and Effect-first architecture
+  // Release v0.1.7 with network invite system and simplified versioning
   appId: 'requests-and-offers.happenings-community.kangaroo-electron',
   productName: 'Requests and Offers',
-  version: '0.1.0-alpha.7',
+  version: '0.1.7',
   macOSCodeSigning: false,
   windowsEVCodeSigning: false,
   fallbackToIndexHtml: true,
