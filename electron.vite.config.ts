@@ -22,6 +22,7 @@ export default defineConfig({
           indexNotFound: resolve(__dirname, 'src/renderer/indexNotFound.html'),
           indexNotFound2: resolve(__dirname, 'src/renderer/indexNotFound2.html'),
           loading: resolve(__dirname, 'src/renderer/loading.html'),
+          networkSetup: resolve(__dirname, 'src/renderer/networkSetup.html'),
           setupPassword: resolve(__dirname, 'src/renderer/setupPassword.html'),
           setupPasswordOptional: resolve(__dirname, 'src/renderer/setupPasswordOptional.html'),
           enterPassword: resolve(__dirname, 'src/renderer/enterPassword.html'),

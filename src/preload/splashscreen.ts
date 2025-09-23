@@ -12,5 +12,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getProfile: () => ipcRenderer.invoke('get-profile'),
   getNameAndVersion: () => ipcRenderer.invoke('get-name-and-version'),
   launch: (passwordInput: PasswordType) => ipcRenderer.invoke('launch', passwordInput),
+  setupNetwork: (config: any) => ipcRenderer.invoke('setup-network', config),
   exit: () => ipcRenderer.invoke('exit'),
 });

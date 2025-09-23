@@ -145,6 +145,7 @@ export type PasswordType =
     };
 
 export enum SplashScreenType {
+  NetworkSetup,
   LoadingOnly,
   EnterPassword,
   PasswordSetup,

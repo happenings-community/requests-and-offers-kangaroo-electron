@@ -1,10 +1,10 @@
 import { defineConfig } from './src/main/defineConfig';
 
 const config = defineConfig({
-  // Alpha 7 release with production bootstrap server
+  // Release v0.1.8 with network invite system and simplified versioning
   appId: 'requests-and-offers.happenings-community.kangaroo-electron',
   productName: 'Requests and Offers',
-  version: '0.1.0-alpha.7',
+  version: '0.1.8',
   macOSCodeSigning: false,
   windowsEVCodeSigning: false,
   fallbackToIndexHtml: true,
