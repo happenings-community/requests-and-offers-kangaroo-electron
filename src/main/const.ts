@@ -38,8 +38,8 @@ export const LAIR_BINARY = path.join(
   }`
 );
 
-export const HAPP_PATH = path.join(RESOURCES_DIRECTORY, 'kangaroo.happ');
-export const HAPP_APP_ID = 'kangaroo.happ';
+export const HAPP_PATH = path.join(RESOURCES_DIRECTORY, 'requests_and_offers.happ');
+export const HAPP_APP_ID = 'requests_and_offers.happ';
 
 export const UI_DIRECTORY = path.join(RESOURCES_DIRECTORY, 'ui');
 
