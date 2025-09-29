@@ -46,7 +46,7 @@ const config = defineConfig({
 if (process.env.NODE_ENV === 'production' || process.env.CI === 'true') {
   const productionBootstrapUrl = 'https://holostrap.elohim.host/';
   const productionSignalUrl = 'wss://holostrap.elohim.host/';
-  
+
   if (!config.bootstrapUrl || config.bootstrapUrl !== productionBootstrapUrl) {
     console.error(`
 ❌ DEPLOYMENT ERROR: Invalid bootstrap server for production!
@@ -57,7 +57,7 @@ Please update kangaroo.config.ts to use the production bootstrap server.
     `);
     process.exit(1);
   }
-  
+
   if (!config.signalUrl || config.signalUrl !== productionSignalUrl) {
     console.error(`
 ❌ DEPLOYMENT ERROR: Invalid signal server for production!
@@ -68,7 +68,7 @@ Please update kangaroo.config.ts to use the production signal server.
     `);
     process.exit(1);
   }
-  
+
   // Check for test server patterns
   if (config.bootstrapUrl?.includes('dev-test') || config.bootstrapUrl?.includes('test')) {
     console.error(`
@@ -80,7 +80,7 @@ Test servers should not be used in production deployments.
     `);
     process.exit(1);
   }
-  
+
   // Only log validation success when not being required by scripts
   if (require.main === module) {
     console.log('✅ Production server validation passed');
