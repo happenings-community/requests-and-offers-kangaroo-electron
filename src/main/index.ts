@@ -173,17 +173,7 @@ app.whenReady().then(async () => {
   let splashScreenType: SplashScreenType;
   let startImmediately = false;
 
-  // Check for network configuration first
-  if (!KANGAROO_FILESYSTEM.hasNetworkConfig()) {
-    splashScreenType = SplashScreenType.NetworkSetup;
-    startImmediately = false;
-  } else {
-    const networkConfig = KANGAROO_FILESYSTEM.loadNetworkConfig();
-    if (networkConfig) {
-      RUN_OPTIONS.networkSeed = networkConfig.networkSeed;
-    }
-
-    if (KANGAROO_CONFIG.passwordMode === 'no-password') {
+  if (KANGAROO_CONFIG.passwordMode === 'no-password') {
     splashScreenType = SplashScreenType.LoadingOnly;
     startImmediately = true;
   } else if (KANGAROO_CONFIG.passwordMode === 'password-required') {
@@ -210,7 +200,6 @@ app.whenReady().then(async () => {
       }\nRandom pw exists: ${KANGAROO_FILESYSTEM.randomPasswordExists()}`
     );
   }
-  }
 
   /**
    * IPC handlers
@@ -231,26 +220,21 @@ app.whenReady().then(async () => {
   // Will be called by the splashscreen UI in the "password-optional"
   // or "user-provided" password modes
   ipcMain.handle('launch', async (_e, passwordInput: PasswordType): Promise<void> => {
-    try {
-      const { lairHandle, holochainManager, mainWindow, zomeCallSigner } = await launch(
-        KANGAROO_FILESYSTEM,
-        KANGAROO_EMITTER,
-        SPLASH_SCREEN_WINDOW,
-        passwordInput,
-        RUN_OPTIONS
-      );
+    const { lairHandle, holochainManager, mainWindow, zomeCallSigner } = await launch(
+      KANGAROO_FILESYSTEM,
+      KANGAROO_EMITTER,
+      SPLASH_SCREEN_WINDOW,
+      passwordInput,
+      RUN_OPTIONS
+    );
 
-      LAIR_HANDLE = lairHandle;
-      HOLOCHAIN_MANAGER = holochainManager;
-      MAIN_WINDOW = mainWindow;
-      ZOME_CALL_SIGNER = zomeCallSigner;
+    LAIR_HANDLE = lairHandle;
+    HOLOCHAIN_MANAGER = holochainManager;
+    MAIN_WINDOW = mainWindow;
+    ZOME_CALL_SIGNER = zomeCallSigner;
 
-      if (KANGAROO_CONFIG.systray) {
-        MAIN_WINDOW.on('close', mainWindowCloseHandler);
-      }
-    } catch (error) {
-      console.error('Launch failed:', error);
-      throw error; // This ensures the error is sent back to the renderer process
+    if (KANGAROO_CONFIG.systray) {
+      MAIN_WINDOW.on('close', mainWindowCloseHandler);
     }
   });
   ipcMain.handle('open-logs', async () => KANGAROO_FILESYSTEM.openLogs());
@@ -286,64 +270,7 @@ app.whenReady().then(async () => {
       app.relaunch(options);
       app.quit();
     }
-  });
-
-  ipcMain.handle('setup-network', async (_e, config: { action: 'create' | 'join', instanceName: string, networkSeed?: string }) => {
-    try {
-      // Input validation
-      if (!config?.action || !config?.instanceName) {
-        throw new Error('Missing required parameters: action and instanceName are required');
-      }
-      
-      if (!['create', 'join'].includes(config.action)) {
-        throw new Error('Invalid action: must be either "create" or "join"');
-      }
-      
-      if (config.instanceName.trim().length === 0) {
-        throw new Error('Instance name cannot be empty');
-      }
-      
-      const crypto = require('crypto');
-      let networkSeed: string;
-      
-      if (config.action === 'create') {
-        networkSeed = crypto.randomBytes(32).toString('hex');
-      } else {
-        if (!config.networkSeed || config.networkSeed.trim().length === 0) {
-          throw new Error('Network seed is required when joining an existing network');
-        }
-        
-        // Basic validation for network seed format (hex string)
-        if (!/^[a-fA-F0-9]{64}$/.test(config.networkSeed.trim())) {
-          throw new Error('Invalid network seed format: must be a 64-character hexadecimal string');
-        }
-        
-        networkSeed = config.networkSeed.trim();
-      }
-      
-      // Save network configuration
-      KANGAROO_FILESYSTEM.saveNetworkConfig({
-        instanceName: config.instanceName.trim(),
-        networkSeed: networkSeed
-      });
-      
-      // Update runtime options
-      RUN_OPTIONS.networkSeed = networkSeed;
-      
-      return { 
-        success: true,
-        networkSeed, 
-        instanceName: config.instanceName.trim() 
-      };
-    } catch (error) {
-      console.error('Network setup failed:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
-      };
-    }
-  });
-
+  }),
     // ------------------------------------------------------------------------------------
 
     (SPLASH_SCREEN_WINDOW = createSplashWindow(splashScreenType));

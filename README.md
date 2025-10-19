@@ -11,15 +11,12 @@ This repository let's you easily convert your Holochain app into a standalone, e
 
 Depending on which Holochain minor version you want to use you should use the corresponding branch of this repository.
 
+
 - Holochain 0.4.x (stable): [main-0.4](https://github.com/holochain/kangaroo-electron/tree/main-0.4)
 - Holochain 0.5.x: [main](https://github.com/holochain/kangaroo-electron/tree/main)
 - Holochain 0.3.x: [main-0.3](https://github.com/holochain/kangaroo-electron/tree/main-0.3)
 
 # Instructions
-
-## Platform-Specific Guides
-
-- [macOS Deployment Guide](docs/MACOS_DEPLOYMENT.md) - Comprehensive guide for macOS builds, distribution, and Homebrew setup
 
 ## Setup and Testing Locally
 
@@ -56,7 +53,8 @@ yarn dev
 > instances of these servers or use servers that have guaranteed availability for the lifetime
 > of your app's network(s).
 >
-> **Changing these URLs _after_ deployment of your app can result in a network partition**.
+> **Changing these URLs *after* deployment of your app can result in a network partition**.
+
 
 ### Build locally
 
@@ -141,7 +139,7 @@ To use code signing on macOS for your release in CI you will have to
 
 > [!WARNING]
 > **Unsigned applications are put under quarantine on macOS 15 (Sequoia).** The option in the Privacy & Security panel of the System Settings to allow them has been removed. To unset the quarantine attribute of an unsigned app,
-> the command `xattr -r -d com.apple.quarantine /path/to/app` can be executed from a Terminal. The app can then be run.
+the command `xattr -r -d com.apple.quarantine /path/to/app` can be executed from a Terminal. The app can then be run.
 
 ### Windows
 
@@ -186,38 +184,3 @@ Options:
   --print-holochain-logs         Print holochain logs directly to the terminal (they will be still written to the logfile as well)
   -h, --help                     display help for command
 ```
-
-## Downloads
-
-The latest release can be found in the [Releases](https://github.com/happenings-community/requests-and-offers-kangaroo-electron/releases) section.
-
-<<<<<<< HEAD
-### v0.1.0-alpha.6 - Exchanges Enhancement 
-Complete exchanges system with comprehensive response approval/rejection, bidirectional response management, and singleton store pattern implementation. Enhanced automated deployment with cross-platform binary compatibility.
-
-**Release Status**: Desktop builds for Windows, macOS (Intel & ARM64), and Linux (AppImage & .deb) are available.
-=======
-### v0.1.0-alpha.6 - Exchanges Enhancement
-Complete exchanges system with comprehensive response approval/rejection, bidirectional response management, and singleton store pattern implementation. Enhanced automated deployment with cross-platform binary compatibility.
-
-**Release Status**: Desktop builds for Windows, macOS (Intel & ARM64), and Linux (AppImage & .deb) are available.
-
-#### Alpha Testing: Refreshing Agent Data
-
-During alpha testing, you may need to refresh your agent data to start with a clean slate. This is useful for testing new features, resolving data corruption, or starting over with a new agent identity.
-
-**⚠️ Warning**: This will permanently delete all your local app data including your agent identity, requests, offers, and profile information.
-
-**Step-by-Step Instructions:**
-
-1. **Close the application completely**
-   - Windows/Linux: Close app window and check system tray
-   - macOS: Quit the app completely (Cmd+Q)
-
-2. **Delete the data directory** for your platform:
-   - **macOS**: `~/Library/Application Support/Requests and Offers/`
-   - **Windows**: `%APPDATA%\Requests and Offers\` or `C:\Users\[YourUsername]\AppData\Roaming\Requests and Offers\`
-   - **Linux**: `~/.config/Requests and Offers/` or `~/.local/share/Requests and Offers/`
-
-3. **Restart the application** - it will generate a new agent identity and start fresh
->>>>>>> main

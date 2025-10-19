@@ -8,9 +8,6 @@ files:
   - kangaroo.config.ts
 asarUnpack:
   - resources/**
-  - node_modules/@holochain/hc-spin-rust-utils/**
-  - node_modules/@holochain/hc-spin-rust-utils-*/**
-  - '**/*.node'
 win:
   executableName: requests-and-offers.happenings-community.kangaroo-electron
 nsis:
@@ -20,17 +17,9 @@ nsis:
   createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
-  hardenedRuntime: true
-  gatekeeperAssess: false
-  target:
-    - target: default
-      arch:
-        - arm64
-        - x64
   notarize: false
 dmg:
   artifactName: ${name}-${version}-${arch}.${ext}
-  writeUpdateInfo: false
 linux:
   target:
     - AppImage
@@ -39,8 +28,4 @@ linux:
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
-npmRebuild: true
-includeSubNodeModules: true
-buildDependenciesFromSource: true
-nodeGypRebuild: false
-publish: null
+npmRebuild: false

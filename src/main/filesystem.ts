@@ -97,61 +97,6 @@ export class KangarooFileSystem {
     return fs.existsSync(pwPath);
   }
 
-  // Network configuration methods
-  public saveNetworkConfig(config: { instanceName: string, networkSeed: string }) {
-    try {
-      const configPath = path.join(this.profileConfigDir, 'network-config.json');
-
-      if (!fs.existsSync(this.profileConfigDir)) {
-        fs.mkdirSync(this.profileConfigDir, { recursive: true });
-      }
-      
-      // Validate config before saving
-      if (!config.instanceName || !config.networkSeed) {
-        throw new Error('Invalid network configuration: instanceName and networkSeed are required');
-      }
-      
-      fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
-      console.log('Network configuration saved successfully');
-    } catch (error) {
-      console.error('Failed to save network configuration:', error);
-      throw error;
-    }
-  }
-
-  public loadNetworkConfig(): { instanceName: string, networkSeed: string } | null {
-    try {
-      const configPath = path.join(this.profileConfigDir, 'network-config.json');
-      if (!fs.existsSync(configPath)) {
-        return null;
-      }
-      
-      const data = fs.readFileSync(configPath, 'utf-8');
-      const config = JSON.parse(data);
-      
-      // Validate loaded config
-      if (!config.instanceName || !config.networkSeed) {
-        console.warn('Invalid network configuration found, ignoring');
-        return null;
-      }
-      
-      return config;
-    } catch (error) {
-      console.error('Failed to load network configuration:', error);
-      return null;
-    }
-  }
-
-  public hasNetworkConfig(): boolean {
-    try {
-      const configPath = path.join(this.profileConfigDir, 'network-config.json');
-      return fs.existsSync(configPath);
-    } catch (error) {
-      console.error('Failed to check network configuration:', error);
-      return false;
-    }
-  }
-
   async openLogs() {
     try {
       await shell.openPath(this.profileLogsDir);

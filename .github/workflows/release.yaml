@@ -3,8 +3,6 @@ on:
   push:
     branches:
       - release
-    tags:
-      - 'v*'
 
 jobs:
   publish:
@@ -26,35 +24,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: setup bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      # Install build tools for native dependencies
-      - name: Install build dependencies (Ubuntu)
-        if: matrix.platform == 'ubuntu-22.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential python3-dev node-gyp
-
-      - name: Install build dependencies (macOS)
-        if: matrix.platform == 'macos-13' || matrix.platform == 'macos-latest'
-        run: |
-          # Ensure Xcode command line tools are available
-          xcode-select --install || true
-          # Install node-gyp globally
-          npm install -g node-gyp
-          # Prepare disk utility for DMG creation (fix hdiutil device issues)
-          sudo diskutil list
-          sudo purge || true
-
-      - name: Install build dependencies (Windows)
-        if: matrix.platform == 'windows-2022'
-        run: |
-          # Install Visual Studio build tools and node-gyp
-          npm install -g node-gyp
-
       # This step is only used for testing in the official kangaroo repo
       - name: Overwrite Names for release testing
         if: ${{ github.repository }} == 'holochain-apps/kangaroo-electron'
@@ -65,33 +34,16 @@ jobs:
 
       - name: Environment setup
         run: |
-          npm install && npm run fetch:binaries && npm run fetch:webhapp && npm run write:configs
-
-      - name: Install and rebuild native dependencies
-        if: matrix.platform == 'macos-13' || matrix.platform == 'macos-latest'
-        run: |
-          echo "Installing platform-specific native dependencies..."
-          # Force install platform-specific modules for macOS
-          if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
-            npm install --save-optional @holochain/hc-spin-rust-utils-darwin-arm64@0.500.0 || echo "Failed to install ARM64 package"
-          elif [[ "${{ matrix.platform }}" == "macos-13" ]]; then
-            npm install --save-optional @holochain/hc-spin-rust-utils-darwin-x64@0.500.0 || echo "Failed to install x64 package"
-          fi
-          npm rebuild @holochain/hc-spin-rust-utils --update-binary || npm rebuild @holochain/hc-spin-rust-utils || echo "Rebuild failed"
-          npm ls @holochain/hc-spin-rust-utils || echo "Package not found in listing"
-          
-      - name: Verify native modules
-        if: matrix.platform == 'macos-13' || matrix.platform == 'macos-latest'
-        run: |
-          echo "Verifying native module installation..."
-          ls -la node_modules/@holochain/ || echo "Module directory check failed"
-          node -e "console.log('Testing module load...'); require('@holochain/hc-spin-rust-utils'); console.log('✅ Module loaded successfully')" || echo "⚠️ Module load test failed - may be expected in CI"
+          yarn setup
 
       - name: Read kangaroo config
         shell: bash
         id: kangarooConfig
         run: |
           echo "APP_VERSION=$(node -p -e "require('./package.json').version")" >> $GITHUB_OUTPUT
+          echo "APP_ID=$(node ./scripts/read-app-id.js)" >> $GITHUB_OUTPUT
+          echo "MACOS_CODE_SIGNING=$(node ./scripts/read-macos-code-signing.js)" >> $GITHUB_OUTPUT
+          echo "WINDOWS_CODE_SIGNING=$(node ./scripts/read-windows-code-signing.js)" >> $GITHUB_OUTPUT
 
       - name: Check that webhapp is available in pouch folder
         shell: bash
@@ -102,7 +54,7 @@ jobs:
           fi
 
       - name: Setup for macOS code signing
-        if: (matrix.platform == 'macos-13' || matrix.platform == 'macos-latest') && false
+        if: (matrix.platform == 'macos-13' || matrix.platform == 'macos-latest') && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'true'
         uses: matthme/import-codesign-certs@5565bb656f60c98c8fc515f3444dd8db73545dc2
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE }}
@@ -111,44 +63,28 @@ jobs:
       # macOS WITHOUT code signing
       #---------------------------------------------------------------------------------------
       - name: build and upload the app WITHOUT code signing (macOS x86)
-        if: matrix.platform == 'macos-13'
+        if: matrix.platform == 'macos-13' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
-          npm run build:mac-x64
+          yarn build:mac-x64
           ls dist
-          
-          # Upload macOS x64 assets to release
-          APP_ID=$(node ./scripts/read-app-id.js)
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg" --clobber
-          # Upload blockmap files only if they exist
-          [ -f "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" ] && gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-x64.dmg.blockmap" --clobber || echo "DMG blockmap not found, skipping"
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-mac.zip" --clobber
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-mac.zip.blockmap" --clobber
 
       - name: build and upload the app WITHOUT code signing (macOS arm64)
-        if: matrix.platform == 'macos-latest'
+        if: matrix.platform == 'macos-latest' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'false'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: |
-          npm run build:mac-arm64
+          yarn build:mac-arm64
           ls dist
-          
-          # Upload macOS ARM64 assets to release
-          APP_ID=$(node ./scripts/read-app-id.js)
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg" --clobber
-          # Upload blockmap files only if they exist
-          [ -f "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" ] && gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64.dmg.blockmap" --clobber || echo "DMG blockmap not found, skipping"
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64-mac.zip" --clobber
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/Requests and Offers-${{ steps.kangarooConfig.outputs.APP_VERSION }}-arm64-mac.zip.blockmap" --clobber
 
       # macOS WITH code signing
       #---------------------------------------------------------------------------------------
       # Note this issue regarding the if condition: https://github.com/actions/runner/issues/1173
       - name: build and upload the app WITH code signing (macOS x86)
-        if: matrix.platform == 'macos-13' && false
+        if: matrix.platform == 'macos-13' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_DEV_IDENTITY: ${{ secrets.APPLE_DEV_IDENTITY }}
@@ -157,11 +93,11 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           DEBUG: electron-osx-sign*,electron-notarize*
         run: |
-          npm run build:mac-x64
+          yarn build:mac-x64
           ls dist
 
       - name: build and upload the app WITH code signing (macOS arm64)
-        if: matrix.platform == 'macos-latest' && false
+        if: matrix.platform == 'macos-latest' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_DEV_IDENTITY: ${{ secrets.APPLE_DEV_IDENTITY }}
@@ -170,7 +106,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           DEBUG: electron-osx-sign*,electron-notarize*
         run: |
-          npm run build:mac-arm64
+          yarn build:mac-arm64
           ls dist
 
       # Linux
@@ -179,30 +115,14 @@ jobs:
         if: matrix.platform == 'ubuntu-22.04'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APP_VERSION: ${{ steps.kangarooConfig.outputs.APP_VERSION }}
         run: |
-          npm run build:linux
+          yarn build:linux
           ls dist
-
-          # Create latest-linux.yml if it doesn't exist (needed when publish is disabled)
-          APP_ID=$(node ./scripts/read-app-id.js)
-          if [ ! -f "dist/latest-linux.yml" ]; then
-            echo "Creating dummy latest-linux.yml for deb modification script"
-            echo "version: ${APP_VERSION}" > dist/latest-linux.yml
-            echo "files:" >> dist/latest-linux.yml
-            echo "  - url: ${APP_ID}_${APP_VERSION}_amd64.deb" >> dist/latest-linux.yml
-            echo "    sha512: dummy" >> dist/latest-linux.yml
-            echo "    size: 0" >> dist/latest-linux.yml
-            echo "path: ${APP_ID}_${APP_VERSION}_amd64.deb" >> dist/latest-linux.yml
-            echo "sha512: dummy" >> dist/latest-linux.yml
-            echo "releaseDate: $(date -Iseconds)" >> dist/latest-linux.yml
-          fi
 
           # Modify the postinst script of the .deb file
           node ./scripts/extend-deb-postinst.mjs
-          gh release upload "v${APP_VERSION}" "latest-linux.yml" --clobber
-          gh release upload "v${APP_VERSION}" "dist/${APP_ID}_${APP_VERSION}_amd64.deb" --clobber
-          gh release upload "v${APP_VERSION}" "dist/${APP_ID}-${APP_VERSION}.AppImage" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "latest-linux.yml" --clobber
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb" --clobber
 
       # Windows
       #---------------------------------------------------------------------------------------
@@ -212,52 +132,28 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm run build:win
+          yarn build:win
           ls dist
 
           # If Windows EV code signing is set to true in kangaroo.config.ts, do code signing here
-          if [ "$(node ./scripts/read-windows-code-signing.js)" == "true" ]; then
+          if [ "${{ steps.kangarooConfig.outputs.WINDOWS_CODE_SIGNING }}" == "true" ]; then
 
             # Assumes this setup of EV certificates:
             # https://melatonin.dev/blog/how-to-code-sign-windows-installers-with-an-ev-cert-on-github-actions/
 
             # Sign the .exe file
-            APP_ID=$(node ./scripts/read-app-id.js)
             dotnet tool install --global --version 4.0.1 AzureSignTool
             echo "sha512 before code signing"
-            CertUtil -hashfile "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" SHA512
-            AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe"
+            CertUtil -hashfile "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" SHA512
+            AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe"
             echo "sha512 after code signing"
-            CertUtil -hashfile "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" SHA512
+            CertUtil -hashfile "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" SHA512
 
             # Overwrite the latest.yml one with one containing the sha512 of the code signed .exe file
             node ./scripts/latest-yaml.js
             gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "latest.yml" --clobber
-            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
+            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
 
-          else
-            # Upload Windows assets without code signing
-            echo "Code signing disabled - uploading unsigned assets"
-            
-            # Create latest.yml for unsigned build
-            APP_ID=$(node ./scripts/read-app-id.js)
-            if [ ! -f "dist/latest.yml" ]; then
-              echo "Creating latest.yml for unsigned Windows build"
-              cat > dist/latest.yml << EOF
-          version: ${{ steps.kangarooConfig.outputs.APP_VERSION }}
-          files:
-            - url: $APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe
-              sha512: $(cat dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap | head -n1 | cut -d' ' -f1)
-              size: $(stat -c%s "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe")
-          path: $APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe
-          sha512: $(cat dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap | head -n1 | cut -d' ' -f1)
-          releaseDate: $(date -Iseconds)
-          EOF
-            fi
-            
-            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/latest.yml" --clobber
-            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
-            gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/$APP_ID-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe.blockmap" --clobber
           fi
 
       - name: Merge latest-mac.yml mac release files

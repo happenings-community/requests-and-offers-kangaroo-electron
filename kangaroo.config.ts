@@ -1,16 +1,15 @@
 import { defineConfig } from './src/main/defineConfig';
 
-const config = defineConfig({
-  // Release v0.1.8 with network invite system and simplified versioning
+export default defineConfig({
   appId: 'requests-and-offers.happenings-community.kangaroo-electron',
   productName: 'Requests and Offers',
-  version: '0.1.8',
+  version: '0.1.9',
   macOSCodeSigning: false,
   windowsEVCodeSigning: false,
   fallbackToIndexHtml: true,
-  autoUpdates: false,
+  autoUpdates: true,
   systray: true,
-  passwordMode: 'no-password',
+  passwordMode: 'password-optional',
   networkSeed: 'alpha-test-2025',
   bootstrapUrl: 'https://holostrap.elohim.host/',
   signalUrl: 'wss://holostrap.elohim.host/',
@@ -40,51 +39,3 @@ const config = defineConfig({
     },
   },
 });
-
-// Production deployment validation
-// This prevents accidentally deploying with test servers in production
-if (process.env.NODE_ENV === 'production' || process.env.CI === 'true') {
-  const productionBootstrapUrl = 'https://holostrap.elohim.host/';
-  const productionSignalUrl = 'wss://holostrap.elohim.host/';
-
-  if (!config.bootstrapUrl || config.bootstrapUrl !== productionBootstrapUrl) {
-    console.error(`
-❌ DEPLOYMENT ERROR: Invalid bootstrap server for production!
-Current: ${config.bootstrapUrl || 'undefined'}
-Expected: ${productionBootstrapUrl}
-
-Please update kangaroo.config.ts to use the production bootstrap server.
-    `);
-    process.exit(1);
-  }
-
-  if (!config.signalUrl || config.signalUrl !== productionSignalUrl) {
-    console.error(`
-❌ DEPLOYMENT ERROR: Invalid signal server for production!
-Current: ${config.signalUrl || 'undefined'}
-Expected: ${productionSignalUrl}
-
-Please update kangaroo.config.ts to use the production signal server.
-    `);
-    process.exit(1);
-  }
-
-  // Check for test server patterns
-  if (config.bootstrapUrl?.includes('dev-test') || config.bootstrapUrl?.includes('test')) {
-    console.error(`
-❌ DEPLOYMENT ERROR: Test bootstrap server detected in production!
-Current: ${config.bootstrapUrl}
-Expected: ${productionBootstrapUrl}
-
-Test servers should not be used in production deployments.
-    `);
-    process.exit(1);
-  }
-
-  // Only log validation success when not being required by scripts
-  if (require.main === module) {
-    console.log('✅ Production server validation passed');
-  }
-}
-
-export default config;

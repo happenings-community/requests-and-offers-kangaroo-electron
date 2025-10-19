@@ -13,7 +13,7 @@ build/*
 !build/entitlements.mac.plist
 
 # pouch
-# pouch/*.webhapp  # Temporarily allow committing webhapp for release
+pouch/*.webhapp
 
 # electron-builder
 out/
@@ -80,3 +80,5 @@ typings/
 # Vite
 .vite/
 
+# Local files
+**.local.*

@@ -46,7 +46,7 @@ export const createHappWindow = async (
         ? !fs.existsSync(absoluteFilePath)
         : false;
 
-      if (!relativeFilePath.endsWith('index.html') && !fallbackToIndexHtml && fs.existsSync(absoluteFilePath)) {
+      if (!relativeFilePath.endsWith('index.html') && !fallbackToIndexHtml) {
         return net.fetch(url.pathToFileURL(absoluteFilePath).toString());
       } else {
         const indexHtmlResponse = await net.fetch(url.pathToFileURL(path.join(uiSource.path, 'index.html')).toString());
@@ -200,10 +200,6 @@ export const createSplashWindow = (type: SplashScreenType): BrowserWindow => {
     }
     case SplashScreenType.LoadingOnly: {
       htmlFile = 'loading.html';
-      break;
-    }
-    case SplashScreenType.NetworkSetup: {
-      htmlFile = 'networkSetup.html';
       break;
     }
     case SplashScreenType.PasswordSetup: {
