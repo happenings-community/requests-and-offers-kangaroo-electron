@@ -145,8 +145,8 @@ jobs:
           yarn build:win
           ls dist
 
-          # Always upload the Windows executable
-          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}-setup.exe" --clobber
+          # Use wildcard pattern to find and upload the Windows executable
+          find dist -name "*.exe" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} \;
 
           # If Windows EV code signing is set to true in kangaroo.config.ts, do code signing here
           if [ "${{ steps.kangarooConfig.outputs.WINDOWS_CODE_SIGNING }}" == "true" ]; then
