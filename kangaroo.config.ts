@@ -3,7 +3,7 @@ import { defineConfig } from './src/main/defineConfig';
 export default defineConfig({
   appId: 'requests-and-offers.happenings-community.kangaroo-electron',
   productName: 'Requests and Offers',
-  version: '0.1.9',
+  version: '0.1.10',
   macOSCodeSigning: false,
   windowsEVCodeSigning: false,
   fallbackToIndexHtml: true,
@@ -11,8 +11,8 @@ export default defineConfig({
   systray: true,
   passwordMode: 'password-optional',
   networkSeed: 'alpha-test-2025',
-  bootstrapUrl: 'https://holostrap.elohim.host/',
-  signalUrl: 'wss://holostrap.elohim.host/',
+  bootstrapUrl: 'https://dev-test-bootstrap2.holochain.org/',
+  signalUrl: 'wss://dev-test-bootstrap2.holochain.org/',
   iceUrls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'],
   bins: {
     holochain: {
