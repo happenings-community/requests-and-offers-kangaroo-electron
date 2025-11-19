@@ -93,7 +93,7 @@ export const createHappWindow = async (
     icon,
     title: KANGAROO_CONFIG.productName,
     webPreferences: {
-      preload: path.resolve(__dirname, '../preload/happ.js'),
+      preload: path.resolve(__dirname, '../../out/preload/happ.js'),
     },
   });
 
@@ -221,7 +221,7 @@ export const createSplashWindow = (type: SplashScreenType): BrowserWindow => {
     show: false,
     backgroundColor: '#fbf9f7',
     webPreferences: {
-      preload: path.join(__dirname, '../preload/splashscreen.js'),
+      preload: path.join(__dirname, '../../out/preload/splashscreen.js'),
     },
   });
 

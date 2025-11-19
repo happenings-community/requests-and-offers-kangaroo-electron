@@ -217,6 +217,15 @@ app.whenReady().then(async () => {
     productName: KANGAROO_CONFIG.productName,
     version: KANGAROO_CONFIG.version,
   }));
+
+  // Handler to get the kangaroo config for network status display
+  ipcMain.handle('get-kangaroo-config', () => ({
+    bootstrapUrl: KANGAROO_CONFIG.bootstrapUrl,
+    signalUrl: KANGAROO_CONFIG.signalUrl,
+    networkSeed: KANGAROO_CONFIG.networkSeed || `${KANGAROO_CONFIG.productName}-${semver.major(KANGAROO_CONFIG.version)}.${semver.minor(KANGAROO_CONFIG.version)}`,
+    productName: KANGAROO_CONFIG.productName,
+    version: KANGAROO_CONFIG.version,
+  }));
   // Will be called by the splashscreen UI in the "password-optional"
   // or "user-provided" password modes
   ipcMain.handle('launch', async (_e, passwordInput: PasswordType): Promise<void> => {

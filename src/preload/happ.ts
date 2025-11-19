@@ -7,3 +7,8 @@ contextBridge.exposeInMainWorld('__HC_ZOME_CALL_SIGNER__', {
   signZomeCall: (zomeCall: CallZomeRequest) =>
     ipcRenderer.invoke('sign-zome-call', zomeCall),
 });
+
+// Expose the Kangaroo config getter to the renderer process
+contextBridge.exposeInMainWorld('__KANGAROO__', {
+  getConfig: () => ipcRenderer.invoke('get-kangaroo-config'),
+});

@@ -11,8 +11,8 @@ export default defineConfig({
   systray: true,
   passwordMode: 'password-optional',
   networkSeed: 'alpha-test-2025',
-  bootstrapUrl: 'https://holostrap.elohim.host/',
-  signalUrl: 'wss://holostrap.elohim.host/',
+  bootstrapUrl: 'https://bootstrap.holo.host/',
+  signalUrl: 'wss://bootstrap.holo.host/',
   iceUrls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'],
   bins: {
     holochain: {
