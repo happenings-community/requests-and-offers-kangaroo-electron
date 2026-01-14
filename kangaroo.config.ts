@@ -3,16 +3,16 @@ import { defineConfig } from './src/main/defineConfig';
 export default defineConfig({
   appId: 'requests-and-offers.happenings-community.kangaroo-electron',
   productName: 'Requests and Offers',
-  version: '0.2.3',
+  version: '0.3.0',
   macOSCodeSigning: false,
   windowsEVCodeSigning: false,
   fallbackToIndexHtml: true,
   autoUpdates: true,
   systray: true,
   passwordMode: 'password-optional',
-  networkSeed: 'alpha-test-2025',
-  bootstrapUrl: 'https://bootstrap.holo.host/',
-  signalUrl: 'wss://sbd.holo.host/',
+  networkSeed: 'alpha-test-2026',
+  bootstrapUrl: 'https://holostrap.elohim.host/',
+  signalUrl: 'wss://holostrap.elohim.host/',
   iceUrls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'],
   bins: {
     holochain: {
