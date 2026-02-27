@@ -71,7 +71,7 @@ jobs:
           yarn build:mac-x64
           ls dist
           # Upload any .dmg file found in dist directory
-          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} \;
+          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
       - name: build and upload the app WITHOUT code signing (macOS arm64)
         if: matrix.platform == 'macos-latest' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'false'
@@ -82,7 +82,7 @@ jobs:
           yarn build:mac-arm64
           ls dist
           # Upload any .dmg file found in dist directory
-          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} \;
+          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
       # macOS WITH code signing
       #---------------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ jobs:
           yarn build:mac-x64
           ls dist
           # Upload any .dmg file found in dist directory
-          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} \;
+          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
       - name: build and upload the app WITH code signing (macOS arm64)
         if: matrix.platform == 'macos-latest' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'true'
@@ -115,7 +115,7 @@ jobs:
           yarn build:mac-arm64
           ls dist
           # Upload any .dmg file found in dist directory
-          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} \;
+          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
       # Linux
       #---------------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ jobs:
           ls dist
 
           # Use wildcard pattern to find and upload the Windows executable
-          find dist -name "*.exe" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} \;
+          find dist -name "*.exe" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
           # If Windows EV code signing is set to true in kangaroo.config.ts, do code signing here
           if [ "${{ steps.kangarooConfig.outputs.WINDOWS_CODE_SIGNING }}" == "true" ]; then
