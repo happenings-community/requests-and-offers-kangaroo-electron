@@ -8,6 +8,9 @@ files:
   - kangaroo.config.ts
 asarUnpack:
   - resources/**
+  - node_modules/@holochain/hc-spin-rust-utils/**
+  - node_modules/@holochain/hc-spin-rust-utils-*/**
+  - '**/*.node'
 win:
   executableName: requests-and-offers.happenings-community.kangaroo-electron
 nsis:
@@ -28,4 +31,4 @@ linux:
   category: Utility
 appImage:
   artifactName: ${name}-${version}.${ext}
-npmRebuild: false
+npmRebuild: true
