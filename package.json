@@ -1,6 +1,6 @@
 {
   "name": "requests-and-offers.happenings-community.kangaroo-electron",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "license": "CAL-1.0",
   "homepage": "https://github.com/happenings-community/requests-and-offers",
   "main": "./out/main/index.js",
@@ -26,7 +26,7 @@
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
     "@holochain/client": "^0.20.0",
-    "@holochain/hc-spin-rust-utils": "0.700.0-dev.0",
+    "@holochain/hc-spin-rust-utils": "0.600.0",
     "@matthme/electron-updater": "6.3.0-alpha.1",
     "@msgpack/msgpack": "^2.8.0",
     "adm-zip": "0.5.14",
