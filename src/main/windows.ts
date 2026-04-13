@@ -42,9 +42,14 @@ export const createHappWindow = async (
       const relativeFilePath = path.join(...filePathComponents);
       const absoluteFilePath = path.join(uiSource.path, relativeFilePath);
 
-      const fallbackToIndexHtml = KANGAROO_CONFIG.fallbackToIndexHtml
-        ? !fs.existsSync(absoluteFilePath)
-        : false;
+      // When the URL is the root path (/), path.join("") resolves to "."
+      // which points to the build directory itself. fs.existsSync(directory)
+      // returns true, causing the fallback to be skipped and the directory
+      // fetched as a file — producing a 404 on initial load and reload of /.
+      const isRootPath = relativeFilePath === '.' || relativeFilePath === '';
+      const fallbackToIndexHtml =
+        isRootPath ||
+        (KANGAROO_CONFIG.fallbackToIndexHtml ? !fs.existsSync(absoluteFilePath) : false);
 
       if (!relativeFilePath.endsWith('index.html') && !fallbackToIndexHtml) {
         return net.fetch(url.pathToFileURL(absoluteFilePath).toString());
@@ -125,7 +130,7 @@ export const createHappWindow = async (
   } else if (uiSource.type === 'path') {
     try {
       console.log('loading URL');
-      await happWindow.loadURL(`webhapp://webhappwindow/index.html`);
+      await happWindow.loadURL(`webhapp://webhappwindow/`);
       console.log('URL loaded');
     } catch (e) {
       console.error('[ERROR] Failed to fetch index.html');
