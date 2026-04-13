@@ -130,7 +130,7 @@ export const createHappWindow = async (
   } else if (uiSource.type === 'path') {
     try {
       console.log('loading URL');
-      await happWindow.loadURL(`webhapp://webhappwindow/index.html`);
+      await happWindow.loadURL(`webhapp://webhappwindow/`);
       console.log('URL loaded');
     } catch (e) {
       console.error('[ERROR] Failed to fetch index.html');
