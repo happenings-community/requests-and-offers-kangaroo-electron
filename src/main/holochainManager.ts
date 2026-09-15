@@ -56,6 +56,7 @@ export class HolochainManager {
     lairUrl: string,
     bootstrapUrl: string,
     signalUrl: string,
+    relayUrl: string,
     iceUrls?: string[],
     rustLog?: string,
     wasmLog?: string
@@ -75,6 +76,14 @@ export class HolochainManager {
       conductorConfig = CONDUCTOR_CONFIG_TEMPLATE;
     }
 
+    // Holochain 0.6.1 rejects unknown config fields. A config written by an
+    // earlier build still has the 0.6.0 network shape (network.type,
+    // base64_auth_material, top-level request_timeout_s) and would stop the
+    // conductor from starting, so the network section is always rebuilt from
+    // the template and the old top-level key is dropped.
+    conductorConfig.network = { ...CONDUCTOR_CONFIG_TEMPLATE.network };
+    delete conductorConfig.request_timeout_s;
+
     conductorConfig.data_root_path = rootDir;
     conductorConfig.keystore.connection_url = lairUrl;
     conductorConfig.admin_interfaces = [
@@ -88,6 +97,7 @@ export class HolochainManager {
       ? bootstrapUrl
       : KANGAROO_CONFIG.bootstrapUrl;
     conductorConfig.network.signal_url = signalUrl ? signalUrl : KANGAROO_CONFIG.signalUrl;
+    conductorConfig.network.relay_url = relayUrl ? relayUrl : KANGAROO_CONFIG.relayUrl;
     const iceConfig = iceUrls
       ? iceUrls.map((url) => ({ urls: [url] }))
       : KANGAROO_CONFIG.iceUrls.map((url) => ({ urls: [url] }));

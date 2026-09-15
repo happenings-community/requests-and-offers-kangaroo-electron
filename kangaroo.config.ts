@@ -13,6 +13,7 @@ export default defineConfig({
   networkSeed: 'alpha-test-2026',
   bootstrapUrl: 'https://dev-test-bootstrap2.holochain.org/',
   signalUrl: 'wss://dev-test-bootstrap2.holochain.org/',
+  relayUrl: 'https://iroh-relay-hc.holochain.org/',
   iceUrls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'],
   bins: {
     holochainVersion: '0.6.1',
