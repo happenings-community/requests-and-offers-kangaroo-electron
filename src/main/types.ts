@@ -77,6 +77,10 @@ export type KangarooConfig = {
    */
   signalUrl: string;
   /**
+   * URL of the iroh relay server to use
+   */
+  relayUrl: string;
+  /**
    * ICE Urls for the WebRTC configuration
    */
   iceUrls: string[];
