@@ -10,7 +10,7 @@ export default defineConfig({
   autoUpdates: true,
   systray: true,
   passwordMode: 'password-optional',
-  networkSeed: 'alpha-test-2026',
+  networkSeed: 'alpha1-iroh-2026',
   bootstrapUrl: 'https://dev-test-bootstrap2.holochain.org/',
   signalUrl: 'wss://dev-test-bootstrap2.holochain.org/',
   relayUrl: 'https://iroh-relay-hc.holochain.org/',
