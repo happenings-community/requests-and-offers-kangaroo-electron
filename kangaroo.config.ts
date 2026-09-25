@@ -10,24 +10,23 @@ export default defineConfig({
   autoUpdates: true,
   systray: true,
   passwordMode: 'password-optional',
-  networkSeed: 'alpha-test-2026',
+  networkSeed: 'alpha1-iroh-2026',
   bootstrapUrl: 'https://dev-test-bootstrap2.holochain.org/',
   signalUrl: 'wss://dev-test-bootstrap2.holochain.org/',
   relayUrl: 'https://iroh-relay-hc.holochain.org/',
   iceUrls: ['stun:stun.cloudflare.com:3478', 'stun:stun.l.google.com:19302'],
   bins: {
     holochainVersion: '0.6.1',
-    holochainFeature: 'go-pion',
     holochain: {
       sha256: {
         'x86_64-unknown-linux-gnu':
-          'e9c80702e68cbb35612d5ebe9ebb8eb5a35f1724c632f038f323c29c34618600',
+          '423f1111773c83c4c4f07e0bb338289d9bf0c5fa53dd31414b05b0dc8119ada7',
         'aarch64-unknown-linux-gnu':
-          '10a66f83ac2f7068e291ae1cf64f4c7571d1908ed7403ec08c2e5b92f17a3c15',
+          '263be8307257a08c46a1b7d547c26cd213a7ab986602498c15eccb2618107246',
         'x86_64-pc-windows-msvc.exe':
-          'ceb4512b830511fd596810f8b3cf548235106b0a8a7340a5a18eb88544da99d6',
-        'x86_64-apple-darwin': 'b99d17dd3dc20b990c73d2c6e25aab4931b0f99fca838d794b609729f677aa71',
-        'aarch64-apple-darwin': '08e6519a7d9835dc4b9a3a868f415298d52c5f50d5234d70a20fa9387951aa0b',
+          '8bf0355d5ff203a91d981c210676300ac12e3aa2669a0f002e6e6ae3747fe747',
+        'x86_64-apple-darwin': '12e6424578899d5fa8847b0e4be709848370277587b552e7520eebfb03f9b7d8',
+        'aarch64-apple-darwin': 'cfff436e181b7afb1e86cd12bb5a337954493328229c79c1dc9db5a1519c7851',
       },
     },
     lair: {
