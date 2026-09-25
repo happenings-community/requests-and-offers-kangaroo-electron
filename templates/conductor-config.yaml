@@ -15,12 +15,11 @@ network:
   base64_auth_material_bootstrap: ~
   base64_auth_material_relay: ~
   bootstrap_url: "###DEFINED_IN_KANGAROO_CONFIG###"
-  signal_url: "###DEFINED_IN_KANGAROO_CONFIG###"
+  # Required by the Holochain 0.6 config schema but unused: this app ships the
+  # default iroh build, which connects through relay_url. Remove at Holochain 0.7,
+  # whose schema has no signal_url and rejects unknown fields.
+  signal_url: "wss://dev-test-bootstrap2.holochain.org/"
   relay_url: "###DEFINED_IN_KANGAROO_CONFIG###"
-  webrtc_config:
-    iceServers:
-      - urls:
-          - "###DEFINED_IN_KANGAROO_CONFIG###"
   target_arc_factor: 1
   report: none
   advanced: ~
