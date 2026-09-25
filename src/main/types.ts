@@ -73,17 +73,9 @@ export type KangarooConfig = {
    */
   bootstrapUrl: string;
   /**
-   * URL of the signaling server to use
-   */
-  signalUrl: string;
-  /**
    * URL of the iroh relay server to use
    */
   relayUrl: string;
-  /**
-   * ICE Urls for the WebRTC configuration
-   */
-  iceUrls: string[];
   /**
    * The network seed to use when installing the happ. If not set, the
    * network seed will automatically be generated and be based on the

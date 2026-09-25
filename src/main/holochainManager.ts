@@ -55,9 +55,7 @@ export class HolochainManager {
     configPath: string,
     lairUrl: string,
     bootstrapUrl: string,
-    signalUrl: string,
     relayUrl: string,
-    iceUrls?: string[],
     rustLog?: string,
     wasmLog?: string
   ): Promise<HolochainManager> {
@@ -96,12 +94,7 @@ export class HolochainManager {
     conductorConfig.network.bootstrap_url = bootstrapUrl
       ? bootstrapUrl
       : KANGAROO_CONFIG.bootstrapUrl;
-    conductorConfig.network.signal_url = signalUrl ? signalUrl : KANGAROO_CONFIG.signalUrl;
     conductorConfig.network.relay_url = relayUrl ? relayUrl : KANGAROO_CONFIG.relayUrl;
-    const iceConfig = iceUrls
-      ? iceUrls.map((url) => ({ urls: [url] }))
-      : KANGAROO_CONFIG.iceUrls.map((url) => ({ urls: [url] }));
-    conductorConfig.network.webrtc_config = { iceServers: iceConfig };
 
     console.log('Writing conductor-config.yaml...');
 
