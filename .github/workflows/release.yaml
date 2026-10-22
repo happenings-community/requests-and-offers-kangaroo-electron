@@ -71,6 +71,8 @@ jobs:
         run: |
           yarn build:mac-x64
           ls dist
+          # Upload any .dmg file found in dist directory
+          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
       - name: build and upload the app WITHOUT code signing (macOS arm64)
         if: matrix.platform == 'macos-latest' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'false'
@@ -80,6 +82,8 @@ jobs:
         run: |
           yarn build:mac-arm64
           ls dist
+          # Upload any .dmg file found in dist directory
+          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
       # macOS WITH code signing
       #---------------------------------------------------------------------------------------
@@ -96,6 +100,8 @@ jobs:
         run: |
           yarn build:mac-x64
           ls dist
+          # Upload any .dmg file found in dist directory
+          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
       - name: build and upload the app WITH code signing (macOS arm64)
         if: matrix.platform == 'macos-latest' && steps.kangarooConfig.outputs.MACOS_CODE_SIGNING == 'true'
@@ -109,6 +115,8 @@ jobs:
         run: |
           yarn build:mac-arm64
           ls dist
+          # Upload any .dmg file found in dist directory
+          find dist -name "*.dmg" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
       # Linux
       #---------------------------------------------------------------------------------------
@@ -124,6 +132,8 @@ jobs:
           node ./scripts/extend-deb-postinst.mjs
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "latest-linux.yml" --clobber
           gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}_${{ steps.kangarooConfig.outputs.APP_VERSION }}_amd64.deb" --clobber
+          # Upload AppImage artifact for broader Linux distribution
+          gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" "dist/${{ steps.kangarooConfig.outputs.APP_ID }}-${{ steps.kangarooConfig.outputs.APP_VERSION }}.AppImage" --clobber
 
       # Windows
       #---------------------------------------------------------------------------------------
@@ -135,6 +145,9 @@ jobs:
         run: |
           yarn build:win
           ls dist
+
+          # Use wildcard pattern to find and upload the Windows executable
+          find dist -name "*.exe" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
           # If Windows EV code signing is set to true in kangaroo.config.ts, do code signing here
           if [ "${{ steps.kangarooConfig.outputs.WINDOWS_CODE_SIGNING }}" == "true" ]; then

@@ -19,6 +19,7 @@ import { sha512 } from 'js-sha512';
 import {
   CallZomeRequest,
   CallZomeRequestSigned,
+  CellType,
   getNonceExpiration,
   randomNonce,
 } from '@holochain/client';
@@ -30,7 +31,12 @@ import { KangarooEmitter } from './eventEmitter';
 import { setupLogs } from './logs';
 import { HolochainManager } from './holochainManager';
 import { createSplashWindow } from './windows';
-import { KANGAROO_CONFIG, NOTIFICATIONS_ICON_PATH, SYSTRAY_ICON_PATH } from './const';
+import {
+  HAPP_APP_ID,
+  KANGAROO_CONFIG,
+  NOTIFICATIONS_ICON_PATH,
+  SYSTRAY_ICON_PATH,
+} from './const';
 import { kangarooMenu } from './menu';
 import { validateArgs } from './cli';
 import { autoUpdater, UpdateCheckResult } from '@matthme/electron-updater';
@@ -174,6 +180,19 @@ const handleSignZomeCall = async (
 
 let ZOME_CALL_SIGNER: ZomeCallSigner | undefined;
 let HOLOCHAIN_MANAGER: HolochainManager | undefined;
+
+function installedNetworkSeed(): string | undefined {
+  const appInfo = HOLOCHAIN_MANAGER?.installedApps.find(
+    (info) => info.installed_app_id === HAPP_APP_ID
+  );
+  if (!appInfo) return undefined;
+  for (const cells of Object.values(appInfo.cell_info)) {
+    for (const cell of cells) {
+      if (cell.type === CellType.Provisioned) return cell.value.dna_modifiers.network_seed;
+    }
+  }
+  return undefined;
+}
 let LAIR_HANDLE: childProcess.ChildProcessWithoutNullStreams | undefined;
 let MAIN_WINDOW: BrowserWindow | undefined | null;
 let SPLASH_SCREEN_WINDOW: BrowserWindow | undefined;
@@ -229,6 +248,19 @@ app.whenReady().then(async () => {
     app.exit(0);
   });
   ipcMain.handle('get-name-and-version', () => ({
+    productName: KANGAROO_CONFIG.productName,
+    version: KANGAROO_CONFIG.version,
+  }));
+
+  // Handler to get the network settings for the status display. Reports what the
+  // running conductor uses: the bootstrap and relay URLs in effect, and the seed
+  // the installed happ was installed with.
+  ipcMain.handle('get-kangaroo-config', () => ({
+    bootstrapUrl: RUN_OPTIONS.bootstrapUrl
+      ? RUN_OPTIONS.bootstrapUrl.toString()
+      : KANGAROO_CONFIG.bootstrapUrl,
+    relayUrl: RUN_OPTIONS.relayUrl ? RUN_OPTIONS.relayUrl.toString() : KANGAROO_CONFIG.relayUrl,
+    networkSeed: installedNetworkSeed() ?? RUN_OPTIONS.networkSeed,
     productName: KANGAROO_CONFIG.productName,
     version: KANGAROO_CONFIG.version,
   }));

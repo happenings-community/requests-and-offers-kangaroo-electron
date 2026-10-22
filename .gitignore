@@ -80,3 +80,5 @@ typings/
 # Vite
 .vite/
 
+# Local files
+**.local.*

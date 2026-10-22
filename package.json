@@ -1,7 +1,8 @@
 {
-  "name": "org.holochain.kangaroo-electron",
-  "version": "0.1.0",
+  "name": "requests-and-offers.happenings-community.kangaroo-electron",
+  "version": "0.6.0-alpha.1",
   "license": "CAL-1.0",
+  "homepage": "https://github.com/happenings-community/requests-and-offers",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "yarn write:configs && yarn pouch:unpack && yarn create:icons && electron-vite dev",
@@ -25,8 +26,8 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
-    "@holochain/client": "^0.21.1-rc.0",
-    "@holochain/hc-spin-rust-utils": "0.700.1-rc.2",
+    "@holochain/client": "^0.21.0",
+    "@holochain/hc-spin-rust-utils": "0.700.0",
     "@matthme/electron-updater": "6.3.0-alpha.2",
     "@msgpack/msgpack": "^3.1.3",
     "adm-zip": "0.5.18",

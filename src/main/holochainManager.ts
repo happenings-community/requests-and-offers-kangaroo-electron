@@ -73,6 +73,14 @@ export class HolochainManager {
       conductorConfig = CONDUCTOR_CONFIG_TEMPLATE;
     }
 
+    // Holochain 0.6.1 rejects unknown config fields. A config written by an
+    // earlier build still has the 0.6.0 network shape (network.type,
+    // base64_auth_material, top-level request_timeout_s) and would stop the
+    // conductor from starting, so the network section is always rebuilt from
+    // the template and the old top-level key is dropped.
+    conductorConfig.network = { ...CONDUCTOR_CONFIG_TEMPLATE.network };
+    delete conductorConfig.request_timeout_s;
+
     conductorConfig.data_root_path = rootDir;
     conductorConfig.keystore.connection_url = lairUrl;
     conductorConfig.admin_interfaces = [
