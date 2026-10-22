@@ -184,4 +184,3 @@ Options:
   --print-holochain-logs         Print holochain logs directly to the terminal (they will be still written to the logfile as well)
   -h, --help                     display help for command
 ```
-# Updated at lun 08 déc 2025 18:01:06 EST
