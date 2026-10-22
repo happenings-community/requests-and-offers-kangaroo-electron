@@ -154,10 +154,14 @@ export function breakingVersion(version: string): string {
   if (!semver.valid(version)) {
     throw new Error('App has an invalid version number.');
   }
+  // Every pre-release is its own breaking version: 0.6.0-alpha.1 and 0.6.0-alpha.2
+  // get separate data folders. A pre-release can change the DNA, and keeping only
+  // the first identifier (alpha) installed alpha.2 over alpha.1's conductor data,
+  // which a new Holochain version may not be able to read. Nothing is deleted.
   const prerelease = semver.prerelease(version);
   if (prerelease) {
     return `${semver.major(version)}.${semver.minor(version)}.${semver.patch(version)}-${
-      prerelease[0]
+      prerelease.join('.')
     }`;
   }
   switch (semver.major(version)) {
