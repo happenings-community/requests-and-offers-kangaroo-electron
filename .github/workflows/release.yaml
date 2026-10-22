@@ -147,7 +147,7 @@ jobs:
           ls dist
 
           # Use wildcard pattern to find and upload the Windows executable
-          find dist -name "*.exe" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
+          find dist -maxdepth 1 -name "*-setup.exe" -exec gh release upload "v${{ steps.kangarooConfig.outputs.APP_VERSION }}" {} --clobber \;
 
           # If Windows EV code signing is set to true in kangaroo.config.ts, do code signing here
           if [ "${{ steps.kangarooConfig.outputs.WINDOWS_CODE_SIGNING }}" == "true" ]; then
