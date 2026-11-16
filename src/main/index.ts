@@ -40,6 +40,7 @@ import {
 import { kangarooMenu } from './menu';
 import { validateArgs } from './cli';
 import { autoUpdater, UpdateCheckResult } from '@matthme/electron-updater';
+import { latestReleaseVersion } from './updates';
 import { launch } from './launch';
 import { PasswordType, SplashScreenType } from './types';
 
@@ -371,10 +372,14 @@ app.whenReady().then(async () => {
 
     console.log('updateCheckResult: ', updateCheckResult);
 
-    // We only install semver compatible updates
+    // We only install semver compatible updates, and only the release marked Latest: the updater ignores the
+    // Latest and prerelease flags, so a release published without Latest would otherwise be offered too.
     const appVersion = app.getVersion();
+    const latestVersion = updateCheckResult ? await latestReleaseVersion() : null;
     if (
       updateCheckResult &&
+      latestVersion !== null &&
+      updateCheckResult.updateInfo.version === latestVersion &&
       breakingVersion(updateCheckResult.updateInfo.version) === breakingVersion(appVersion) &&
       semver.gt(updateCheckResult.updateInfo.version, appVersion)
     ) {
