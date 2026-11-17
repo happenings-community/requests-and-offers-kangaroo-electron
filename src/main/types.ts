@@ -73,7 +73,7 @@ export type KangarooConfig = {
    */
   bootstrapUrl: string;
   /**
-   * URL of the iroh relay server to use
+   * URL of the relay server to use
    */
   relayUrl: string;
   /**
@@ -115,7 +115,7 @@ export type KangarooConfig = {
   };
   bins: {
     holochainVersion: string;
-    holochainFeature?: "go-pion" | "go-pion-unstable" | "iroh";
+    holochainFeature?: "unstable";
     holochain: Sha256Hashes;
     lair: Sha256Hashes;
   };

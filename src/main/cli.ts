@@ -78,7 +78,7 @@ export function validateArgs(args: CliOpts): RunOptions {
     holochainRustLog: args.holochainRustLog ? args.holochainRustLog : undefined,
     holochainWasmLog: args.holochainWasmLog ? args.holochainWasmLog : undefined,
     lairRustLog: args.lairRustLog ? args.lairRustLog : undefined,
-    printHolochainLogs: args.printHolochainLogs ? true : false,
+    printHolochainLogs: !!args.printHolochainLogs,
   };
 }
 
