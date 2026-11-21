@@ -242,7 +242,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          yarn build:linux
+          yarn build:linux --publish never
           # The same .deb rewrite release.yaml runs (AppArmor profile on Ubuntu 24.04+).
           node ./scripts/extend-deb-postinst.mjs
 
@@ -251,19 +251,19 @@ jobs:
         shell: bash
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: yarn build:mac-arm64
+        run: yarn build:mac-arm64 --publish never
 
       - name: Build (macOS x64)
         if: matrix.label == 'mac-x64'
         shell: bash
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: yarn build:mac-x64
+        run: yarn build:mac-x64 --publish never
 
       - name: Build (Windows)
         if: matrix.label == 'windows'
         shell: bash
-        run: yarn build:win
+        run: yarn build:win --publish never
 
       # Installers only. latest*.yml is never collected: it is what the updater reads.
       - name: Collect the installers
