@@ -1,7 +1,10 @@
 name: 'test-installers'
 
 # Builds the installers for every platform from a test .webhapp, without a tag,
-# and publishes them as a GitHub PRE-RELEASE named as a test build.
+# and publishes them as a GitHub PRE-RELEASE named as a test build. Its tag
+# (test-v...) is deliberately not semver: the updater reads releases.atom, keeps
+# the highest valid semver tag and ignores the prerelease and Latest flags, so a
+# semver-looking test tag would shadow the real releases for installed apps.
 #
 # This is not a release. release.yaml (a push to `release`) is untouched, and so
 # is everything it owns: the real v<version> release, the latest*.yml update
@@ -17,8 +20,13 @@ name: 'test-installers'
 #     --repo happenings-community/requests-and-offers-kangaroo-electron \
 #     -f happ_run_id=<RUN_ID>
 #
+# Precondition: the dry run must have been made after the wrapper's `release`
+# branch carries this config (seed and Holochain line). The hApp's release.yml
+# takes the manifest seed from `release`, and the seed guard below rejects a
+# dry run whose seed differs from this checkout's.
+#
 # Delete a test build when done:
-#   gh release delete <tag> --cleanup-tag --yes \
+#   gh release delete test-v<version>-dryrun-<id> --cleanup-tag --yes \
 #     --repo happenings-community/requests-and-offers-kangaroo-electron
 
 on:
@@ -34,6 +42,10 @@ on:
         required: false
       webhapp_sha256:
         description: Expected sha256 of the .webhapp. Required with webhapp_url, checked against the manifest with a run id.
+        type: string
+        required: false
+      webhapp_seed:
+        description: The network seed the .webhapp was measured with. Required with webhapp_url, must equal networkSeed in kangaroo.config.ts.
         type: string
         required: false
 
@@ -57,6 +69,7 @@ jobs:
       source_id: ${{ steps.describe.outputs.source_id }}
       webhapp_sha256: ${{ steps.describe.outputs.webhapp_sha256 }}
       webhapp_source: ${{ steps.describe.outputs.webhapp_source }}
+      url_mode: ${{ steps.describe.outputs.url_mode }}
     steps:
       - uses: actions/checkout@v6
 
@@ -67,6 +80,7 @@ jobs:
           RUN_ID: ${{ inputs.happ_run_id }}
           URL: ${{ inputs.webhapp_url }}
           SHA: ${{ inputs.webhapp_sha256 }}
+          SEED: ${{ inputs.webhapp_seed }}
         run: |
           set -euo pipefail
           if [ -n "$RUN_ID" ] && [ -n "$URL" ]; then
@@ -81,6 +95,7 @@ jobs:
           if [ -n "$URL" ]; then
             [[ "$URL" =~ ^https://[^[:space:]]+$ ]] || { echo "webhapp_url must be an https URL."; exit 1; }
             [[ "$SHA" =~ ^[0-9a-f]{64}$ ]] || { echo "webhapp_url needs webhapp_sha256 (64 lowercase hex characters)."; exit 1; }
+            [[ "$SEED" =~ ^[A-Za-z0-9._-]+$ ]] || { echo "webhapp_url needs webhapp_seed (letters, digits, . _ -)."; exit 1; }
           fi
           if [ -n "$SHA" ] && ! [[ "$SHA" =~ ^[0-9a-f]{64}$ ]]; then
             echo "webhapp_sha256 must be 64 lowercase hex characters."; exit 1
@@ -95,6 +110,13 @@ jobs:
           RUN_ID: ${{ inputs.happ_run_id }}
         run: |
           set -euo pipefail
+          # Only a successful run of the hApp's release.yml, dispatched or tagged,
+          # is a dry run worth building from.
+          info=$(gh api "repos/$HAPP_REPO/actions/runs/$RUN_ID" --jq '[.path, .event, .conclusion] | @tsv')
+          IFS=$'\t' read -r run_path run_event run_conclusion <<< "$info"
+          [ "$run_path" = ".github/workflows/release.yml" ] || { echo "Run $RUN_ID is workflow $run_path, not release.yml."; exit 1; }
+          case "$run_event" in workflow_dispatch|push) ;; *) echo "Run $RUN_ID has event $run_event."; exit 1 ;; esac
+          [ "$run_conclusion" = "success" ] || { echo "Run $RUN_ID concluded $run_conclusion, not success."; exit 1; }
           mkdir -p happ-artefacts
           gh run download "$RUN_ID" --repo "$HAPP_REPO" --name release-artefacts --dir happ-artefacts
           find happ-artefacts -type f
@@ -114,11 +136,17 @@ jobs:
           RUN_ID: ${{ inputs.happ_run_id }}
           URL: ${{ inputs.webhapp_url }}
           EXPECTED: ${{ inputs.webhapp_sha256 }}
+          URL_SEED: ${{ inputs.webhapp_seed }}
         run: |
           set -euo pipefail
           webhapp=$(find happ-artefacts -type f -name '*.webhapp' | head -n 1)
           [ -n "$webhapp" ] || { echo "No .webhapp in the download."; exit 1; }
           actual=$(sha256sum "$webhapp" | cut -d' ' -f1)
+          # The version and the seed come from this checkout's kangaroo.config.ts,
+          # which is what the installers are built with.
+          version=$(grep -oP "^\s*version:\s*'\K[^']+" kangaroo.config.ts | head -n 1)
+          wrapper_seed=$(grep -oP "^\s*networkSeed:\s*'\K[^']+" kangaroo.config.ts | head -n 1)
+          [ -n "$version" ] && [ -n "$wrapper_seed" ] || { echo "kangaroo.config.ts has no version or networkSeed."; exit 1; }
 
           if [ -n "$RUN_ID" ]; then
             manifest=$(find happ-artefacts -type f -name release-manifest.json | head -n 1)
@@ -129,11 +157,14 @@ jobs:
             # `release`. This checkout must carry the same seed, or testers run a
             # different network from the one the manifest describes.
             manifest_seed=$(jq -r .desktop.networkSeed "$manifest")
-            wrapper_seed=$(grep -oP "^\s*networkSeed:\s*'\K[^']+" kangaroo.config.ts | head -n 1)
             [ "$manifest_seed" = "$wrapper_seed" ] || { echo "Network seed differs: manifest $manifest_seed, this checkout $wrapper_seed"; exit 1; }
+            manifest_version=$(jq -r .version "$manifest")
+            [ "$manifest_version" = "$version" ] || { echo "Version differs: manifest $manifest_version, this checkout $version"; exit 1; }
             source_id="$RUN_ID"
             source="hApp dry run https://github.com/$HAPP_REPO/actions/runs/$RUN_ID"
           else
+            # No manifest here, so the seed is the caller's word, checked against this checkout.
+            [ "$URL_SEED" = "$wrapper_seed" ] || { echo "Network seed differs: webhapp_seed $URL_SEED, this checkout $wrapper_seed"; exit 1; }
             source_id="url-${actual:0:12}"
             source="$URL"
           fi
@@ -144,10 +175,11 @@ jobs:
           mkdir -p webhapp
           cp "$webhapp" webhapp/requests_and_offers.webhapp
           {
-            echo "version=$(node -p "require('./package.json').version")"
+            echo "version=$version"
             echo "source_id=$source_id"
             echo "webhapp_sha256=$actual"
             echo "webhapp_source=$source"
+            echo "url_mode=${URL:+yes}"
           } >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-artifact@v6
@@ -188,9 +220,10 @@ jobs:
           name: test-webhapp
           path: test-webhapp
 
-      # `yarn setup` minus `fetch:webhapp`. That step refuses a .webhapp in pouch/
-      # while kangaroo.config.ts names a webhapp.url, which `release` does, so the
-      # test webhapp is placed here and the fetch step is skipped, on any ref.
+      # `yarn setup` minus `fetch:webhapp`. fetch-webhapp.js throws when a .webhapp
+      # sits in pouch/ and kangaroo.config.ts names a webhapp.url, which `release`
+      # does after a handoff. Here the test webhapp is copied into pouch/ and the
+      # fetch is skipped, so the build is the same on any ref.
       - name: Environment setup
         shell: bash
         run: |
@@ -272,23 +305,33 @@ jobs:
           WEBHAPP_SHA: ${{ needs.prepare.outputs.webhapp_sha256 }}
           WEBHAPP_SOURCE: ${{ needs.prepare.outputs.webhapp_source }}
           WRAPPER_SHA: ${{ github.sha }}
+          URL_MODE: ${{ needs.prepare.outputs.url_mode }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -euo pipefail
-          TAG="v${VERSION}-dryrun-${SOURCE_ID}"
+          TAG="test-v${VERSION}-dryrun-${SOURCE_ID}"
           # Refuse a tag that is not clearly a test build, whatever the inputs were.
-          case "$TAG" in v*-dryrun-*) ;; *) echo "Unexpected tag $TAG"; exit 1 ;; esac
+          # It must not be valid semver (the updater would rank it above real releases).
+          case "$TAG" in test-v*-dryrun-*) ;; *) echo "Unexpected tag $TAG"; exit 1 ;; esac
 
           (cd installers && sha256sum -- * > SHA256SUMS.txt && cat SHA256SUMS.txt)
 
+          NETWORK_NOTE=""
+          if [ -n "$URL_MODE" ]; then
+            NETWORK_NOTE="The webhapp came from a URL, with no release manifest: its network seed is the caller's word, checked only against kangaroo.config.ts."
+          fi
           cat > notes.md <<EOF
-          **TEST BUILD, not a release.** Built from a dry-run webhapp for testing. It is a pre-release, it is not marked Latest, and it ships no update metadata (no latest*.yml), so an installed app's updater has nothing to install from it.
+          **TEST BUILD, not a release.** Built from a dry-run webhapp for testing. It is a pre-release, it is not marked Latest, and it ships no update metadata (no latest*.yml), so an installed app's updater has nothing to install from it. The tag is not semver on purpose, so it cannot outrank a real release.
+
+          **This build has the same version as the real release.** When you are done testing, delete it and reinstall the real release.
 
           - Version: ${VERSION}
           - Webhapp: ${WEBHAPP_SOURCE}
           - Webhapp sha256: ${WEBHAPP_SHA}
           - Wrapper commit: ${WRAPPER_SHA}
           - Build run: ${RUN_URL}
+
+          ${NETWORK_NOTE}
 
           Pick your file: macOS on Apple Silicon is the arm64 .dmg, macOS on Intel is the x64 .dmg, Windows is the setup .exe, Linux is the .AppImage or the .deb. SHA256SUMS.txt lists every file.
 
