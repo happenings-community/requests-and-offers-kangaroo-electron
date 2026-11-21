@@ -1,0 +1,321 @@
+name: 'test-installers'
+
+# Builds the installers for every platform from a test .webhapp, without a tag,
+# and publishes them as a GitHub PRE-RELEASE named as a test build.
+#
+# This is not a release. release.yaml (a push to `release`) is untouched, and so
+# is everything it owns: the real v<version> release, the latest*.yml update
+# metadata and the Latest marker. This workflow never uploads update metadata,
+# never creates a release that can be marked Latest, and never pushes a branch.
+#
+# Dispatch only: the input that matters (the hApp's dry-run run id) cannot ride
+# on a branch push. A dispatch workflow must exist on the default branch to be
+# listed in the Actions tab.
+#
+# Trigger, after the hApp's Release dry run (run id is in its URL):
+#   gh workflow run test-installers.yaml \
+#     --repo happenings-community/requests-and-offers-kangaroo-electron \
+#     -f happ_run_id=<RUN_ID>
+#
+# Delete a test build when done:
+#   gh release delete <tag> --cleanup-tag --yes \
+#     --repo happenings-community/requests-and-offers-kangaroo-electron
+
+on:
+  workflow_dispatch:
+    inputs:
+      happ_run_id:
+        description: Run id of the hApp's Release dry run (requests-and-offers repository). Fetches its release-artefacts artefact, kept 7 days.
+        type: string
+        required: false
+      webhapp_url:
+        description: Alternative to the run id, an https URL to a .webhapp.
+        type: string
+        required: false
+      webhapp_sha256:
+        description: Expected sha256 of the .webhapp. Required with webhapp_url, checked against the manifest with a run id.
+        type: string
+        required: false
+
+concurrency:
+  group: test-installers-${{ inputs.happ_run_id || inputs.webhapp_url }}
+  cancel-in-progress: false
+
+# Read-only by default. Only the publish job can write.
+permissions:
+  contents: read
+
+env:
+  HAPP_REPO: happenings-community/requests-and-offers
+
+jobs:
+  prepare:
+    name: Fetch and verify the test webhapp
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.describe.outputs.version }}
+      source_id: ${{ steps.describe.outputs.source_id }}
+      webhapp_sha256: ${{ steps.describe.outputs.webhapp_sha256 }}
+      webhapp_source: ${{ steps.describe.outputs.webhapp_source }}
+    steps:
+      - uses: actions/checkout@v6
+
+      # Inputs are text someone typed: they reach the shell through env only,
+      # never as an expression pasted into a script.
+      - name: Check the inputs
+        env:
+          RUN_ID: ${{ inputs.happ_run_id }}
+          URL: ${{ inputs.webhapp_url }}
+          SHA: ${{ inputs.webhapp_sha256 }}
+        run: |
+          set -euo pipefail
+          if [ -n "$RUN_ID" ] && [ -n "$URL" ]; then
+            echo "Give happ_run_id or webhapp_url, not both."; exit 1
+          fi
+          if [ -z "$RUN_ID" ] && [ -z "$URL" ]; then
+            echo "Give happ_run_id (the hApp's Release dry run) or webhapp_url."; exit 1
+          fi
+          if [ -n "$RUN_ID" ] && ! [[ "$RUN_ID" =~ ^[0-9]+$ ]]; then
+            echo "happ_run_id must be digits only."; exit 1
+          fi
+          if [ -n "$URL" ]; then
+            [[ "$URL" =~ ^https://[^[:space:]]+$ ]] || { echo "webhapp_url must be an https URL."; exit 1; }
+            [[ "$SHA" =~ ^[0-9a-f]{64}$ ]] || { echo "webhapp_url needs webhapp_sha256 (64 lowercase hex characters)."; exit 1; }
+          fi
+          if [ -n "$SHA" ] && ! [[ "$SHA" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "webhapp_sha256 must be 64 lowercase hex characters."; exit 1
+          fi
+
+      # The workflow token reads the hApp repository because it is public. If
+      # GitHub refuses it (HTTP 403), use webhapp_url instead.
+      - name: Download the dry-run artefact
+        if: ${{ inputs.happ_run_id != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.happ_run_id }}
+        run: |
+          set -euo pipefail
+          mkdir -p happ-artefacts
+          gh run download "$RUN_ID" --repo "$HAPP_REPO" --name release-artefacts --dir happ-artefacts
+          find happ-artefacts -type f
+
+      - name: Download the webhapp from the URL
+        if: ${{ inputs.webhapp_url != '' }}
+        env:
+          URL: ${{ inputs.webhapp_url }}
+        run: |
+          set -euo pipefail
+          mkdir -p happ-artefacts
+          curl --fail --silent --show-error --location --output happ-artefacts/requests_and_offers.webhapp "$URL"
+
+      - name: Verify the webhapp
+        id: describe
+        env:
+          RUN_ID: ${{ inputs.happ_run_id }}
+          URL: ${{ inputs.webhapp_url }}
+          EXPECTED: ${{ inputs.webhapp_sha256 }}
+        run: |
+          set -euo pipefail
+          webhapp=$(find happ-artefacts -type f -name '*.webhapp' | head -n 1)
+          [ -n "$webhapp" ] || { echo "No .webhapp in the download."; exit 1; }
+          actual=$(sha256sum "$webhapp" | cut -d' ' -f1)
+
+          if [ -n "$RUN_ID" ]; then
+            manifest=$(find happ-artefacts -type f -name release-manifest.json | head -n 1)
+            [ -n "$manifest" ] || { echo "No release-manifest.json in the artefact."; exit 1; }
+            from_manifest=$(jq -r .webhapp.sha256 "$manifest")
+            [ "$actual" = "$from_manifest" ] || { echo "sha256 differs from the manifest: $actual vs $from_manifest"; exit 1; }
+            # The dry run measured the DNA hashes with the seed the wrapper had on
+            # `release`. This checkout must carry the same seed, or testers run a
+            # different network from the one the manifest describes.
+            manifest_seed=$(jq -r .desktop.networkSeed "$manifest")
+            wrapper_seed=$(grep -oP "^\s*networkSeed:\s*'\K[^']+" kangaroo.config.ts | head -n 1)
+            [ "$manifest_seed" = "$wrapper_seed" ] || { echo "Network seed differs: manifest $manifest_seed, this checkout $wrapper_seed"; exit 1; }
+            source_id="$RUN_ID"
+            source="hApp dry run https://github.com/$HAPP_REPO/actions/runs/$RUN_ID"
+          else
+            source_id="url-${actual:0:12}"
+            source="$URL"
+          fi
+          if [ -n "$EXPECTED" ] && [ "$actual" != "$EXPECTED" ]; then
+            echo "sha256 differs from webhapp_sha256: $actual vs $EXPECTED"; exit 1
+          fi
+
+          mkdir -p webhapp
+          cp "$webhapp" webhapp/requests_and_offers.webhapp
+          {
+            echo "version=$(node -p "require('./package.json').version")"
+            echo "source_id=$source_id"
+            echo "webhapp_sha256=$actual"
+            echo "webhapp_source=$source"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: test-webhapp
+          path: webhapp/requests_and_offers.webhapp
+          retention-days: 7
+          if-no-files-found: error
+
+  build:
+    name: Build ${{ matrix.label }}
+    needs: prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-22.04
+            label: linux
+          - platform: macos-latest
+            label: mac-arm64
+          - platform: macos-15-intel
+            label: mac-x64
+          - platform: windows-2022
+            label: windows
+    env:
+      MACOSX_DEPLOYMENT_TARGET: 10.13
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: 'yarn'
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: test-webhapp
+          path: test-webhapp
+
+      # `yarn setup` minus `fetch:webhapp`. That step refuses a .webhapp in pouch/
+      # while kangaroo.config.ts names a webhapp.url, which `release` does, so the
+      # test webhapp is placed here and the fetch step is skipped, on any ref.
+      - name: Environment setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f pouch/*.webhapp
+          cp test-webhapp/requests_and_offers.webhapp pouch/requests_and_offers.webhapp
+          yarn
+          yarn check:pairing
+          yarn fetch:binaries
+          yarn write:configs
+
+      # No signing on any platform. macOSCodeSigning and windowsEVCodeSigning are
+      # false in kangaroo.config.ts and this workflow reads no signing secret.
+      - name: Build (Linux)
+        if: matrix.label == 'linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          yarn build:linux
+          # The same .deb rewrite release.yaml runs (AppArmor profile on Ubuntu 24.04+).
+          node ./scripts/extend-deb-postinst.mjs
+
+      - name: Build (macOS arm64)
+        if: matrix.label == 'mac-arm64'
+        shell: bash
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: yarn build:mac-arm64
+
+      - name: Build (macOS x64)
+        if: matrix.label == 'mac-x64'
+        shell: bash
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: yarn build:mac-x64
+
+      - name: Build (Windows)
+        if: matrix.label == 'windows'
+        shell: bash
+        run: yarn build:win
+
+      # Installers only. latest*.yml is never collected: it is what the updater reads.
+      - name: Collect the installers
+        shell: bash
+        run: |
+          set -euo pipefail
+          ls dist
+          mkdir -p collect
+          find dist -maxdepth 1 -type f \( -name '*.dmg' -o -name '*-setup.exe' -o -name '*.AppImage' -o -name '*.deb' \) -exec cp {} collect/ \;
+          ls -l collect
+          [ -n "$(ls -A collect)" ] || { echo "No installer produced."; exit 1; }
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: installers-${{ matrix.label }}
+          path: collect/*
+          retention-days: 7
+          if-no-files-found: error
+
+  publish:
+    name: Publish the test pre-release
+    # Strict on purpose: every platform builds or nothing is published.
+    needs: [prepare, build]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: installers-*
+          path: installers
+          merge-multiple: true
+
+      - name: Create the pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+          SOURCE_ID: ${{ needs.prepare.outputs.source_id }}
+          WEBHAPP_SHA: ${{ needs.prepare.outputs.webhapp_sha256 }}
+          WEBHAPP_SOURCE: ${{ needs.prepare.outputs.webhapp_source }}
+          WRAPPER_SHA: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          TAG="v${VERSION}-dryrun-${SOURCE_ID}"
+          # Refuse a tag that is not clearly a test build, whatever the inputs were.
+          case "$TAG" in v*-dryrun-*) ;; *) echo "Unexpected tag $TAG"; exit 1 ;; esac
+
+          (cd installers && sha256sum -- * > SHA256SUMS.txt && cat SHA256SUMS.txt)
+
+          cat > notes.md <<EOF
+          **TEST BUILD, not a release.** Built from a dry-run webhapp for testing. It is a pre-release, it is not marked Latest, and it ships no update metadata (no latest*.yml), so an installed app's updater has nothing to install from it.
+
+          - Version: ${VERSION}
+          - Webhapp: ${WEBHAPP_SOURCE}
+          - Webhapp sha256: ${WEBHAPP_SHA}
+          - Wrapper commit: ${WRAPPER_SHA}
+          - Build run: ${RUN_URL}
+
+          Pick your file: macOS on Apple Silicon is the arm64 .dmg, macOS on Intel is the x64 .dmg, Windows is the setup .exe, Linux is the .AppImage or the .deb. SHA256SUMS.txt lists every file.
+
+          **These installers are not code signed.** macOS: not signed, not notarized. Windows: not signed.
+
+          macOS: unsigned apps are put under quarantine on macOS 15 (Sequoia), and the option in Privacy and Security to allow them has been removed. After dragging the app to Applications, run this once in Terminal, then open the app:
+
+              xattr -r -d com.apple.quarantine "/Applications/Requests and Offers.app"
+
+          Delete this test build when done:
+
+              gh release delete ${TAG} --cleanup-tag --yes --repo ${GITHUB_REPOSITORY}
+          EOF
+          TITLE="TEST BUILD v${VERSION} (dry run ${SOURCE_ID}), not a release"
+          # A re-run finds the pre-release already there: replace its files.
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" --repo "$GITHUB_REPOSITORY" --clobber installers/*
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" \
+              --title "$TITLE" --notes-file notes.md --prerelease --latest=false
+          else
+            gh release create "$TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$WRAPPER_SHA" \
+              --title "$TITLE" \
+              --notes-file notes.md \
+              --prerelease \
+              --latest=false \
+              installers/*
+          fi
+          echo "Published $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/releases/tag/$TAG"
