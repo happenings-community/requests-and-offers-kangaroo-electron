@@ -10,7 +10,7 @@ export default defineConfig({
   autoUpdates: true,
   systray: true,
   passwordMode: 'password-optional',
-  networkSeed: 'alpha2-holochain07-2026',
+  networkSeed: 'alpha2-dogfood-2026-11-21',
   bootstrapUrl: 'https://dev-test-bootstrap2.holochain.org/',
   relayUrl: 'https://dev-test-bootstrap2.holochain.org/',
   bins: {
