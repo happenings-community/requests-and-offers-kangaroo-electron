@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const jsYaml = require('js-yaml');
 const fs = require('fs');
 const path = require('path');
-const tsNode = require('ts-node');
-
-tsNode.register();
+require('tsx/cjs');
 
 const PLACEHOLDER_APP_ID = 'org.holochain.kangaroo-electron';
 const PLACEHOLDER_PRODUCT_NAME = 'Holochain Kangaroo Electron';
@@ -25,7 +22,7 @@ if (!process.env.KANGAROO_DEV) {
     );
 }
 
-if (kangarooConfig.bootstrapUrl === 'https://dev-test-bootstrap2.holochain.org/') {
+if (kangarooConfig.bootstrapUrl === 'https://dev-test-bootstrap2-iroh.holochain.org/') {
   console.log(`
 
          ⚠️   WARNING  ⚠️
@@ -38,6 +35,24 @@ instance of a bootstrap server or use a server that has guaranteed availability
 for the lifetime of your apps network(s).
 
 Changing the bootstrap URL after deployment of your app can result in a network partition
+among users of your app.
+
+  `);
+}
+
+if (kangarooConfig.relayUrl === 'https://dev-test-bootstrap2-iroh.holochain.org/') {
+  console.log(`
+
+         ⚠️   WARNING  ⚠️
+
+The relayUrl field in kangaroo.config.ts is still set to the testing relay server URL.
+This server has no availability guarantees whatsoever and is meant for testing purposes only.
+
+If you want to deploy your app to end-users, make sure to run your own
+instance of a relay server or use a server that has guaranteed availability
+for the lifetime of your apps network(s).
+
+Changing the relay URL after deployment of your app can result in a network partition
 among users of your app.
 
   `);

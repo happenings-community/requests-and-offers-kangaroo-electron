@@ -2,7 +2,7 @@
 
 Put your Holochain App in this Kangaroo's electron pouch and let it run.
 
-This repository let's you easily convert your Holochain app into a standalone, electron-based cross-platform Desktop app.
+This repository lets you easily convert your Holochain app into a standalone, electron-based cross-platform Desktop app.
 
 > [!WARNING]
 > Support for non-breaking updates to happ coordinator zomes is currently not built into the kangaroo. It is expected that there is only ever one single version of a happ for any semver compatible range of versions of a kangaroo packaged app (see also [Versioning](#versioning))
@@ -11,7 +11,8 @@ This repository let's you easily convert your Holochain app into a standalone, e
 
 Depending on which Holochain minor version you want to use you should use the corresponding branch of this repository.
 
-- Holochain 0.6.x (stable): [main-0.6](https://github.com/holochain/kangaroo-electron/tree/main)
+- Holochain 0.7.x (unstable): [current]
+- Holochain 0.6.x (stable): [main-0.6](https://github.com/holochain/kangaroo-electron/tree/main-0.6)
 - Holochain 0.5.x: [main-0.5](https://github.com/holochain/kangaroo-electron/tree/main-0.5)
 - Holochain 0.4.x: [main-0.4](https://github.com/holochain/kangaroo-electron/tree/main-0.4)
 - Holochain 0.3.x: [main-0.3](https://github.com/holochain/kangaroo-electron/tree/main-0.3)
@@ -45,7 +46,7 @@ yarn dev
 ## Build the Distributable
 
 > [!WARNING]
-> The default bootstrap, signaling and ICE servers (used for connection establishment among peers)
+> The default bootstrap and relay server (used for connection establishment among peers)
 > in `kangaroo.config.ts` have no availability guarantees whatsoever and are meant for testing
 > purposes only.
 >
@@ -179,10 +180,7 @@ Options:
   --holochain-wasm-log <string>  WASM_LOG value to pass to the holochain binary
   --lair-rust-log <string>       RUST_LOG value to pass to the lair keystore binary
   -b, --bootstrap-url <url>      URL of the bootstrap server to use (not persisted across restarts).
-  -s, --signal-url <url>      URL of the signaling server to use (not persisted across restarts).
-  --ice-urls <string>            Comma separated string of ICE server URLs to use. Is ignored if an external holochain binary is being used
-                                 (not persisted across restarts).
+  --relay-url <url>              URL of the relay server to use (not persisted across restarts).
   --print-holochain-logs         Print holochain logs directly to the terminal (they will be still written to the logfile as well)
   -h, --help                     display help for command
 ```
-# Updated at lun 08 déc 2025 18:01:06 EST

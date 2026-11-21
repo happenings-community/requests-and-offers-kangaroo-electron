@@ -12,17 +12,13 @@ admin_interfaces:
       allowed_origins: "###DEFINED_AT_RUNTIME###"
 network:
   request_timeout_s: 60
-  base64_auth_material_bootstrap: ~
-  base64_auth_material_relay: ~
   bootstrap_url: "###DEFINED_IN_KANGAROO_CONFIG###"
-  # Required by the Holochain 0.6 config schema but unused: this app ships the
-  # default iroh build, which connects through relay_url. Remove at Holochain 0.7,
-  # whose schema has no signal_url and rejects unknown fields.
-  signal_url: "wss://dev-test-bootstrap2.holochain.org/"
+  base64_auth_material_bootstrap: ~
   relay_url: "###DEFINED_IN_KANGAROO_CONFIG###"
+  base64_auth_material_relay: ~
   target_arc_factor: 1
   report: none
   advanced: ~
-db_sync_strategy: Resilient
+db_sync_level: Normal
 tuning_params: ~
 tracing_scope: ~
