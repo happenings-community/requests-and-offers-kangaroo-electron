@@ -22,7 +22,7 @@ export type KangarooConfig = {
    * 0.1.0 -> 0.2.0: Breaking change;
    * 0.1.0 -> 0.1.1: *No* breaking change;
    * 0.13.0-alpha.0 -> 0.13.0-beta.0: Breaking change;
-   * 0.13.0-alpha.0 -> 0.13.0-alpha.1: *No* breaking change;
+   * 0.13.0-alpha.0 -> 0.13.0-alpha.1: Breaking change (every pre-release gets its own conductor);
    */
   version: string;
   /**

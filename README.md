@@ -116,7 +116,9 @@ Examples:
 - version 0.0.2 and 0.0.3 of your app will store their data in independent locations on disk and version 0.0.3 will not have access to any data created/obtained in version 0.0.2
 - version 0.3.4 will reuse the same Holochain conductor and data as version 0.3.2
 - versions 0.3.0-alpha and 0.3.0-beta will _not_ share data
-- versions 0.3.0-alpha.0 and 0.3.0-alpha.1 _will_ share data
+- versions 0.3.0-alpha.0 and 0.3.0-alpha.1 will _not_ share data either: every pre-release gets its own data folder, because a pre-release can change the DNA or the Holochain version, and a newer Holochain may not be able to read an older conductor's databases (0.7 cannot read 0.6). The older folder stays on disk; nothing is deleted.
+
+Auto-updates follow the same rule: a pre-release is never offered as an update to another pre-release, since each one runs on its own data and, usually, its own network.
 
 > [!NOTE]
 > It is your responsibility to make sure that if you mark two versions of your app as semver compatible they actually are compatible (e.g. that you don't try to run a new incompatible version of Holochain on existing databases).
