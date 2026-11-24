@@ -4,6 +4,10 @@ export default defineConfig({
   appId: 'requests-and-offers.happenings-community.kangaroo-electron',
   productName: 'Requests and Offers',
   version: '0.6.0-alpha.2',
+  webhapp: {
+    url: 'https://github.com/happenings-community/requests-and-offers/releases/download/v0.6.0-alpha.2/requests_and_offers.webhapp',
+    sha256: 'f9ab11bed61f4c6aabf4b2f8044c6f6030b501cd456466f7df27cf7c79b1c307',
+  },
   macOSCodeSigning: false,
   windowsEVCodeSigning: false,
   fallbackToIndexHtml: true,
